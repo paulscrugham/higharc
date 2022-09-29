@@ -16,8 +16,6 @@ class Vertex {
     }
 
     compFN(b, a) {
-        // return false if a is to the left of b, true otherwise.
-        // return (a[0] - center[0]) * (b[1] - center[1]) - (a[1] - center[1]) * (b[0] - center[0]);
         return (a.to.x - a.from.x) * (b.to.y - b.from.y) - (a.to.y - a.from.y) * (b.to.x - b.from.x);
     }
 
@@ -32,8 +30,6 @@ class Vertex {
         for (let i = 0; i < this.edges.length; i++) {
             prev.reverse.next = this.edges[i];
             prev = this.edges[i];
-            // this.edges[i].next = prev;
-            // prev = this.edges[i].reverse;
         }
     }
 
@@ -99,16 +95,10 @@ for (let i = 0; i < v.length; i++) {
     v[i].sortEdges();
 }
 
-// console.log(e);
-// console.log(v);
-
-printVerts(v);
-
 // 4. traverse half edges and build faces
 const faces = [];
 for (let i  = 0; i < e.length; i++) {
     if (e[i].visited == false) {
-        // console.log("in loop");
         const face = [];
         let curr = e[i].next;
         while (!curr.visited) {
@@ -119,5 +109,3 @@ for (let i  = 0; i < e.length; i++) {
         faces.push(face);
     }
 }
-
-console.log(faces);
