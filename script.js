@@ -53,6 +53,27 @@ class Edge {
     }
 }
 
+class Face {
+    constructor(id) {
+        this.id = id;
+        this.keyEdge;
+    }
+    
+    addEdge(edge) {
+        this.edges.push(edge);
+    }
+
+    getVertices() {
+        let verts = [keyEdge.from];
+        let curr = keyEdge.next;
+        while (curr != keyEdge) {
+            verts.push(curr.from);
+        }
+        return verts;
+    }
+
+}
+
 function printVerts(v) {
     for (let i = 0; i < v.length; i++) {
         console.log(v[i].toStr());
@@ -102,10 +123,12 @@ for (let i  = 0; i < e.length; i++) {
         const face = [];
         let curr = e[i].next;
         while (!curr.visited) {
-            face.push(curr);
+            face.push(curr.from);
             curr.visited = true;
             curr = curr.next;
         }
         faces.push(face);
     }
 }
+
+console.log(faces);
