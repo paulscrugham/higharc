@@ -1,21 +1,18 @@
 console.log("Hello! This is my higharch challenge");
 
-
-let g = {
-    "vertices": [[0, 0], [2, 0], [2, 2], [0, 2]],
-    "edges": [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]]
-}
-
-
 class Vertex {
     constructor(x, y, index) {
         this.x = x;
         this.y = y;
         this.index = index;
-        this.edges = [];  // Edges
+        this.edges = [];
     }
 
-    compFN(b, a) {
+    /** 
+     * Computes the cross product of two points aroud a center.
+     * Used in sortEdges as a comparator function to sort edges around a Vertex.
+     */
+    cross(b, a) {
         return (a.to.x - a.from.x) * (b.to.y - b.from.y) - (a.to.y - a.from.y) * (b.to.x - b.from.x);
     }
 
@@ -24,7 +21,7 @@ class Vertex {
     }
 
     sortEdges() {
-        this.edges.sort(this.compFN);
+        this.edges.sort(this.cross);
 
         let prev = this.edges[this.edges.length - 1];
         for (let i = 0; i < this.edges.length; i++) {
@@ -90,6 +87,78 @@ class Face {
     }
 }
 
+class HEGraph {
+    constructor(graph) {
+        this.vertices = graph.vertices;
+        this.edges = graph.edges;
+        this.v = []; // call function to create Vertices
+        this.e = new Array(this.edges.length * 2); // call function to create Edges
+        this.f = []; // call function to create Faces
+        this.buildGraph();
+    }
+
+    buildVertices() {
+        for (let i = 0; i < this.vertices.length; i++) {
+            this.v.push(new Vertex(this.vertices[i][0], this.vertices[i][1], i));
+        }
+    }
+
+    buildEdges() {
+        let from, to;
+        for (let i = 0; i < this.edges.length; i++) {
+            from = this.v[this.edges[i][0]];
+            to = this.v[this.edges[i][1]];
+
+            // create edges
+            this.e[2*i] = new Edge(from, to);
+            this.e[2*i+1] = new Edge(to, from);
+
+            // set edge reverse
+            this.e[2*i].reverse = this.e[2*i+1];
+            this.e[2*i+1].reverse = this.e[2*i];
+        }
+
+        // sort outgoing half edges around each vert
+        for (let i = 0; i < this.v.length; i++) {
+            this.v[i].sortEdges();
+        }
+    }
+
+    buildFaces() {
+        let fCounter = 0;
+
+        // this for loop could be more efficient - could skip edges that have been walked
+        for (let i  = 0; i < this.e.length; i++) {
+            if (this.e[i].visited == false) {
+                let face = new Face(fCounter, this.e[i]);
+                fCounter += 1;
+                let curr = this.e[i].next;
+                while (!curr.visited) {
+                    curr.setFace(face);
+                    curr.visited = true;
+                    curr = curr.next;
+                }
+                this.f.push(face);
+            }
+        }
+    }
+
+    buildGraph() {
+        this.buildVertices();
+        this.buildEdges();
+        this.buildFaces();
+    }
+
+    getFaces() {
+        return this.f;
+    }
+
+    getFace(id) {
+        return this.f[id];
+    }
+
+}
+
 function printVerts(v) {
     for (let i = 0; i < v.length; i++) {
         console.log(v[i].toStr());
@@ -103,59 +172,11 @@ function printVerts(v) {
 }
 
 
-// 1. create Vertex objects
-const v = [];
-
-for (let i = 0; i < g.vertices.length; i++) {
-    v.push(new Vertex(g.vertices[i][0], g.vertices[i][1], i));
+let g = {
+    "vertices": [[0, 0], [2, 0], [2, 2], [0, 2]],
+    "edges": [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]]
 }
 
-// 2. create Edge objects
-const e = new Array(g.edges.length * 2);
-
-let from, to;
-for (let i = 0; i < g.edges.length; i++) {
-    from = v[g.edges[i][0]];
-    to = v[g.edges[i][1]];
-
-    // create edges
-    e[2*i] = new Edge(from, to);
-    e[2*i+1] = new Edge(to, from);
-
-    // set edge reverse
-    e[2*i].reverse = e[2*i+1];
-    e[2*i+1].reverse = e[2*i];
-}
-
-// 3. sort outgoing edges for each Vertex
-for (let i = 0; i < v.length; i++) {
-    v[i].sortEdges();
-}
-
-// 4. traverse half edges and build faces
-const f = [];
-let fCounter = 0;
-
-// this for loop could be more efficient - could skip edges that have been walked
-for (let i  = 0; i < e.length; i++) {
-    if (e[i].visited == false) {
-        let face = new Face(fCounter, e[i]);
-        fCounter += 1;
-        let curr = e[i].next;
-        while (!curr.visited) {
-            curr.setFace(face);
-            curr.visited = true;
-            curr = curr.next;
-        }
-        f.push(face);
-    }
-}
-
-for (let i = 0; i < f.length; i++) {
-    console.log(f[i].getVertices());
-}
-
-for (let i = 0; i < f.length; i++) {
-    console.log("Face " + f[i].id + ": " + f[i].getNeighbors());
-}
-
+let hegraph = new HEGraph(g);
+console.log(hegraph.getFaces());
+console.log(hegraph.getFace(0));
