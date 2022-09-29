@@ -45,33 +45,38 @@ class Edge {
         this.visited = false;
         this.next = null;  // Edge
         this.reverse = null;  // Edge
+        this.face = null;
         from.addEdge(this);  // adds an outgoing edge to the from Vertex object
     }
 
+    setFace(face) {
+        this.face = face;
+    }
+
+    getFace() {
+        return this.face;
+    }
+    
     toStr() {
         return "Edge " + this.from.index + " -> " + this.to.index;
     }
 }
 
 class Face {
-    constructor(id) {
+    constructor(id, keyEdge) {
         this.id = id;
-        this.keyEdge;
-    }
-    
-    addEdge(edge) {
-        this.edges.push(edge);
+        this.keyEdge = keyEdge;
     }
 
     getVertices() {
-        let verts = [keyEdge.from];
-        let curr = keyEdge.next;
-        while (curr != keyEdge) {
+        let verts = [this.keyEdge.from];
+        let curr = this.keyEdge.next;
+        while (curr != this.keyEdge) {
             verts.push(curr.from);
+            curr = curr.next;
         }
         return verts;
     }
-
 }
 
 function printVerts(v) {
@@ -117,18 +122,27 @@ for (let i = 0; i < v.length; i++) {
 }
 
 // 4. traverse half edges and build faces
-const faces = [];
+const f = [];
+let fCounter = 0;
+
+// this for loop could be more efficient - could skip edges that have been walked
 for (let i  = 0; i < e.length; i++) {
     if (e[i].visited == false) {
-        const face = [];
+        let face = new Face(fCounter, e[i]);
+        fCounter += 1;
         let curr = e[i].next;
         while (!curr.visited) {
-            face.push(curr.from);
+            curr.setFace(face);
             curr.visited = true;
             curr = curr.next;
         }
-        faces.push(face);
+        f.push(face);
     }
 }
 
-console.log(faces);
+console.log(e);
+
+for (let i = 0; i < f.length; i++) {
+    console.log(f[i].getVertices());
+}
+
