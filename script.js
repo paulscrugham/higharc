@@ -91,40 +91,46 @@ class HEGraph {
     constructor(graph) {
         this.vertices = graph.vertices;
         this.edges = graph.edges;
-        this.v = []; // call function to create Vertices
-        this.e = new Array(this.edges.length * 2); // call function to create Edges
-        this.f = []; // call function to create Faces
-        this.buildGraph();
+        this.v = this.buildVertices(); // call function to create Vertices
+        this.e = this.buildEdges(); // call function to create Edges
+        this.f = this.buildFaces(); // call function to create Faces
     }
 
     buildVertices() {
+        const v = [];
         for (let i = 0; i < this.vertices.length; i++) {
-            this.v.push(new Vertex(this.vertices[i][0], this.vertices[i][1], i));
+            v.push(new Vertex(this.vertices[i][0], this.vertices[i][1], i));
         }
+        
+        return v;
     }
 
     buildEdges() {
+        const e = new Array(this.edges.length * 2);
         let from, to;
         for (let i = 0; i < this.edges.length; i++) {
             from = this.v[this.edges[i][0]];
             to = this.v[this.edges[i][1]];
 
             // create edges
-            this.e[2*i] = new Edge(from, to);
-            this.e[2*i+1] = new Edge(to, from);
+            e[2*i] = new Edge(from, to);
+            e[2*i+1] = new Edge(to, from);
 
             // set edge reverse
-            this.e[2*i].reverse = this.e[2*i+1];
-            this.e[2*i+1].reverse = this.e[2*i];
+            e[2*i].reverse = e[2*i+1];
+            e[2*i+1].reverse = e[2*i];
         }
 
         // sort outgoing half edges around each vert
         for (let i = 0; i < this.v.length; i++) {
             this.v[i].sortEdges();
         }
+        
+        return e;
     }
 
     buildFaces() {
+        const f = [];
         let fCounter = 0;
 
         // this for loop could be more efficient - could skip edges that have been walked
@@ -138,15 +144,11 @@ class HEGraph {
                     curr.visited = true;
                     curr = curr.next;
                 }
-                this.f.push(face);
+                f.push(face);
             }
         }
-    }
 
-    buildGraph() {
-        this.buildVertices();
-        this.buildEdges();
-        this.buildFaces();
+        return f;
     }
 
     getFaces() {
@@ -157,16 +159,15 @@ class HEGraph {
         return this.f[id];
     }
 
-}
-
-function printVerts(v) {
-    for (let i = 0; i < v.length; i++) {
-        console.log(v[i].toStr());
-        for (let j = 0; j < v[i].edges.length; j++) {
-            console.log("out: " + v[i].edges[j].toStr() + 
-            ", next: " + v[i].edges[j].next.toStr() + 
-            ", next.next : " + v[i].edges[j].next.next.toStr() + 
-            ", next.next.next : " + v[i].edges[j].next.next.next.toStr());
+    printVerts() {
+        for (let i = 0; i < this.v.length; i++) {
+            console.log(this.v[i].toStr());
+            for (let j = 0; j < this.v[i].edges.length; j++) {
+                console.log("out: " + this.v[i].edges[j].toStr() + 
+                ", next: " + this.v[i].edges[j].next.toStr() + 
+                ", next.next : " + this.v[i].edges[j].next.next.toStr() + 
+                ", next.next.next : " + this.v[i].edges[j].next.next.next.toStr());
+            }
         }
     }
 }
@@ -179,4 +180,5 @@ let g = {
 
 let hegraph = new HEGraph(g);
 console.log(hegraph.getFaces());
-console.log(hegraph.getFace(0));
+console.log(hegraph.getFace(2).getNeighbors());
+hegraph.printVerts();
