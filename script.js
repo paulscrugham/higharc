@@ -77,6 +77,17 @@ class Face {
         }
         return verts;
     }
+
+    getNeighbors() {
+        let curr = this.keyEdge.next;
+        const faces = [this.keyEdge.reverse.getFace().id];
+        
+        while (curr != this.keyEdge) {
+            faces.push(curr.reverse.getFace().id);
+            curr = curr.next;
+        }
+        return faces;
+    }
 }
 
 function printVerts(v) {
@@ -140,9 +151,11 @@ for (let i  = 0; i < e.length; i++) {
     }
 }
 
-console.log(e);
-
 for (let i = 0; i < f.length; i++) {
     console.log(f[i].getVertices());
+}
+
+for (let i = 0; i < f.length; i++) {
+    console.log("Face " + f[i].id + ": " + f[i].getNeighbors());
 }
 
