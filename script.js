@@ -42,7 +42,7 @@ class Edge {
         this.visited = false;
         this.next = null;  // Edge
         this.reverse = null;  // Edge
-        this.face = null;
+        this.face = null;  // Face
         from.addEdge(this);  // adds an outgoing edge to the from Vertex object
     }
 
@@ -94,6 +94,7 @@ class HEGraph {
         this.v = this.buildVertices(); // call function to create Vertices
         this.e = this.buildEdges(); // call function to create Edges
         this.f = this.buildFaces(); // call function to create Faces
+        this.exterior;  // class member to track which face is the exterior face
     }
 
     buildVertices() {
@@ -130,6 +131,7 @@ class HEGraph {
     }
 
     buildFaces() {
+        // TODO: cull outer face from list once all faces have been built
         const f = [];
         let fCounter = 0;
 
@@ -172,10 +174,69 @@ class HEGraph {
     }
 }
 
+let userGraph;
+let ns = "http://www.w3.org/2000/svg";
+let mult = 100;
+
+function drawNeighbors() {
+    // get existing svg graph
+    let svg = document.getElementById('svgGraph');
+
+    // create group for neighbor faces
+    let group = document.getElementById('svgNeighborGroup');
+
+    // clear previous neighbor group if one exists
+    if (typeof(group) != "undefined" && group != null) {
+        group.parentNode.removeChild(group);
+    }
+
+    group = document.createElementNS(ns, 'g');
+    group.setAttribute('id', 'svgNeighborGroup');
+
+    // get specified face id
+    let faceId = document.getElementById("faceNeighbor").value;
+    
+    // get all neighboring face ids and draw new polygons
+    let neighborFaceIds = userGraph.getFace(faceId).getNeighbors();
+    for (let i = 0; i < neighborFaceIds.length; i++) {
+        let svgFace = createSVGPoly(userGraph.getFace(neighborFaceIds[i]));
+        svgFace.setAttribute('fill', 'None');
+        svgFace.setAttribute('stroke', 'lime');
+        svgFace.setAttribute('stroke-width', '3');
+        group.append(svgFace);
+    }
+    let svgFace = createSVGPoly(userGraph.getFace(faceId));
+    svgFace.setAttribute('fill', 'None');
+    svgFace.setAttribute('stroke', 'red');
+    svgFace.setAttribute('stroke-width', '3');
+    group.append(svgFace);
+
+    svg.append(group);
+}
+
+function eraseNeighbors() {
+    let group = document.getElementById('svgNeighborGroup');
+    if (typeof(group) != "undefined" && group != null) {
+        group.parentNode.removeChild(group);
+    }
+}
+
+function createSVGPoly(face) {
+    let poly = document.createElementNS(ns, 'polygon');
+    let points = "";
+    let verts = face.getVertices();
+    for (let j = 0; j < verts.length; j++) {
+        points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
+    }
+    poly.setAttribute('points', points);
+    return poly;
+}
+
 function drawGraph(g) {
     let hegraph = new HEGraph(g);
+    userGraph = hegraph;
 
-    let svg = document.getElementById("graph");
+    let svg = document.getElementById("svgGraph");
 
     // clear old svg if one exists
     if (typeof(svg) != "undefined" && svg != null) {
@@ -183,37 +244,28 @@ function drawGraph(g) {
     }
 
     // set up SVG
-    let ns = "http://www.w3.org/2000/svg";
     svg = document.createElementNS(ns, "svg");
     svg.setAttribute("width", "500");
     svg.setAttribute("height", "500");
-    svg.setAttribute("id", "graph");
+    svg.setAttribute("id", "svgGraph");
     svg.style.backgroundColor = "beige";
     document.body.appendChild(svg);
-
-    let mult = 100;
-    
 
     // add polygons
     let faces = hegraph.getFaces();
     for (let i = 0; i < faces.length; i++) {
         let polyStyle = "fill:rgb(" + 50 / faces.length * i + ", " + 255 / faces.length * i + ", " + 255 / faces.length * i + ")";
-        let poly = document.createElementNS(ns, 'polygon');
-        let points = "";
-        let verts = faces[i].getVertices();
-        for (let j = 0; j < verts.length; j++) {
-            points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
-        }
-        poly.setAttribute('points', points);
+        let poly = createSVGPoly(faces[i]);
         poly.setAttribute('style', polyStyle);
+        poly.setAttribute('id', i);
         svg.append(poly);
-        console.log(points);
+        // console.log(points);
     }
+    console.log(userGraph.getFaces());
 }
 
 function onClick() {
     let file = document.getElementById('graphFile');
-    let g;
 
     if(file.files.length)
     {
@@ -227,8 +279,6 @@ function onClick() {
 
         reader.readAsBinaryString(file.files[0]);
     }
-
-
 }
 
 
