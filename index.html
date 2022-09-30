@@ -3,17 +3,26 @@
 <body>
 
 <h2>Higharc Computational Geometry Engineer Challenge</h2>
-
+<form>
+    <button type="button" onclick="algo2tests()">Run algorithm 2 tests</button>
+</form>
+<br>
 <form>
     <input type="file" id="graphFile"/>
     <button type="button" onclick="onClick()">Draw graph!</button>
 </form>
 <br>
-
 <div id="output"></div>
 <br>
+<form>
+    <input type="text" id="faceNeighbor"/>
+    <button type="button" onclick="drawNeighbors()">Draw neighbors</button>
+    <button type="button" onclick="eraseNeighbors()">Erase neighbors</button>
+</form>
+
 
 <script type="text/javascript" src="script.js"></script>
+<script type="text/javascript" src="algo2tests.js"></script>
 <!-- <script type="text/javascript" src="rot_tests.js"></script> -->
 
 </body>
