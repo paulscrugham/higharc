@@ -172,46 +172,66 @@ class HEGraph {
     }
 }
 
-// let g = {
-//     "vertices": [[0, 0], [2, 0], [2, 2], [0, 2]],
-//     "edges": [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3]]
-// }
+function drawGraph(g) {
+    let hegraph = new HEGraph(g);
 
-let g = {
-    "vertices": [[0.5, 0.5], [3, 0], [1, 4], [0, 2], [4, 2], [4, 5]],
-    "edges": [[0, 1], [1, 2], [0, 2], [0, 3], [2, 3], [1, 4], [4, 2], [4, 5], [5, 2]]
-}
+    let svg = document.getElementById("graph");
 
-let hegraph = new HEGraph(g);
-// console.log(hegraph.getFaces());
-// console.log(hegraph.getFace(2).getNeighbors());
-hegraph.printVerts();
-
-// set up SVG
-let ns = "http://www.w3.org/2000/svg";
-let svg = document.createElementNS(ns, "svg");
-svg.setAttribute("width", "500");
-svg.setAttribute("height", "500");
-svg.style.backgroundColor = "beige";
-document.body.appendChild(svg);
-
-let mult = 100;
-let polyStyle = "fill:lime;stroke:purple;stroke-width:1";
-
-// add polygons
-let faces = hegraph.getFaces();
-for (let i = 0; i < faces.length; i++) {
-    let poly = document.createElementNS(ns, 'polygon');
-    let points = "";
-    let verts = faces[i].getVertices();
-    for (let j = 0; j < verts.length; j++) {
-        points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
+    // clear old svg if one exists
+    if (typeof(svg) != "undefined" && svg != null) {
+        svg.parentNode.removeChild(svg);
     }
-    poly.setAttribute('points', points);
-    poly.setAttribute('style', polyStyle);
-    svg.append(poly);
-    console.log(points);
+
+    // set up SVG
+    let ns = "http://www.w3.org/2000/svg";
+    svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("width", "500");
+    svg.setAttribute("height", "500");
+    svg.setAttribute("id", "graph");
+    svg.style.backgroundColor = "beige";
+    document.body.appendChild(svg);
+
+    let mult = 100;
+    
+
+    // add polygons
+    let faces = hegraph.getFaces();
+    for (let i = 0; i < faces.length; i++) {
+        let polyStyle = "fill:rgb(" + 50 / faces.length * i + ", " + 255 / faces.length * i + ", " + 255 / faces.length * i + ")";
+        let poly = document.createElementNS(ns, 'polygon');
+        let points = "";
+        let verts = faces[i].getVertices();
+        for (let j = 0; j < verts.length; j++) {
+            points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
+        }
+        poly.setAttribute('points', points);
+        poly.setAttribute('style', polyStyle);
+        svg.append(poly);
+        console.log(points);
+    }
 }
+
+function onClick() {
+    let file = document.getElementById('graphFile');
+    let g;
+
+    if(file.files.length)
+    {
+        let reader = new FileReader();
+
+        reader.onload = function(e)
+        {
+            document.getElementById('output').innerHTML = e.target.result;
+            drawGraph(JSON.parse(e.target.result));
+        };
+
+        reader.readAsBinaryString(file.files[0]);
+    }
+
+
+}
+
+
 
 
 
