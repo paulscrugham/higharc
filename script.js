@@ -298,7 +298,10 @@ function drawNeighbors(faceId) {
     
     // get all neighboring face ids and draw new polygons
     let neighborFaceIds = userGraph.getFace(faceId).getNeighbors();
-    console.log(neighborFaceIds);
+    // set slider length to number of faces
+    let slider = document.getElementById('faceNeighbor');
+    slider.setAttribute('max', userGraph.getFaces().length - 1);
+    
     for (let i = 0; i < neighborFaceIds.length; i++) {
         let svgFace = createSVGPoly(userGraph.getFace(neighborFaceIds[i]));
         svgFace.setAttribute('fill', 'None');
