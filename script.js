@@ -77,13 +77,16 @@ class Face {
     }
 
     getNeighbors() {
-        let curr = this.keyEdge.next;
-        const faces = [this.keyEdge.reverse.getFace().id];
+        let curr = this.keyEdge;
+        const faces = [];
         
-        while (curr != this.keyEdge) {
-            faces.push(curr.reverse.getFace().id);
+        do {
+            if (curr.reverse) {
+                faces.push(curr.reverse.getFace().id);
+            }
             curr = curr.next;
-        }
+        } while (curr != this.keyEdge);
+        
         return faces;
     }
 }
@@ -164,6 +167,7 @@ class HEGraph {
         // TODO: cull outer face from list once all faces have been built
         const f = [];
         let fCounter = 0;
+        let extFace;
 
         // this for loop could be more efficient - could skip edges that have been walked
         for (let i = 0; i < this.e.length; i++) {
@@ -181,15 +185,18 @@ class HEGraph {
                     // add face if interior
                     fCounter += 1;
                     f.push(face);
+                } else {
+                    extFace = face;
                 }
             }
         }
 
         // iterate over the exterior face and remove interior face references to itself
-        // for (let i = 0; i < this.e.length; i++) {
-
-        // }
-        console.log(f);
+        let curr = extFace.keyEdge.next.next;
+        while (curr != extFace.keyEdge) {
+            curr.reverse.reverse = null;
+            curr = curr.next;
+        }
 
         return f;
     }
@@ -239,6 +246,7 @@ function drawNeighbors() {
     
     // get all neighboring face ids and draw new polygons
     let neighborFaceIds = userGraph.getFace(faceId).getNeighbors();
+    console.log(neighborFaceIds);
     for (let i = 0; i < neighborFaceIds.length; i++) {
         let svgFace = createSVGPoly(userGraph.getFace(neighborFaceIds[i]));
         svgFace.setAttribute('fill', 'None');
