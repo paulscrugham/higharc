@@ -223,13 +223,13 @@ class HEGraph {
     /**
      * Computes "layers" of neighboring face sets from a starting face.
      */
-    getLayers(faceId) {
+    computeLayers(faceId) {
         const layers = [[faceId]];
         const found = new Array(this.f.length).fill(false);
         found[faceId] = true;
         let countFound = 1;
 
-        // iterate till all faces have been found
+        // iterate until all faces have been found
         while (countFound < this.f.length) {
             const currLayer = [];
             // iterate over each face in the last layer of faces
@@ -251,39 +251,40 @@ class HEGraph {
 }
 
 let userGraph;
+let layers;
 let ns = "http://www.w3.org/2000/svg";
 let mult = 100;
 
-function drawLayers() {
+function computeLayers(faceId) {
+    layers = userGraph.computeLayers(faceId);
+    // update slider length
+    let slider = document.getElementById('faceLayersNumber');
+    slider.setAttribute('max', layers.length - 1);
+}
+
+function drawLayers(layerId) {
     // get existing svg graph
     let svg = document.getElementById('svgGraph');
 
     eraseElement('svgLayerGroup');  // clear any existing layer svg
-
-    // get specified face id
-    let faceId = document.getElementById("faceLayersStart").value;
-    let layerNum = document.getElementById("faceLayersNumber").value;
-    let layers = userGraph.getLayers(faceId);
 
     // create group for neighbor faces
     group = document.createElementNS(ns, 'g');
     group.setAttribute('id', 'svgLayerGroup');
 
     // draw layer
-    for (let i = 0; i < layers[layerNum].length; i++) {
-        let face = userGraph.getFace(layers[layerNum][i]);
+    for (let i = 0; i < layers[layerId].length; i++) {
+        let face = userGraph.getFace(layers[layerId][i]);
         let svgFace = createSVGPoly(face);
         svgFace.setAttribute('fill', 'None');
         svgFace.setAttribute('stroke', 'red');
         svgFace.setAttribute('stroke-width', '3');
         group.append(svgFace);
-        console.log(face);
     }
     svg.append(group);
-
 }
 
-function drawNeighbors() {
+function drawNeighbors(faceId) {
     // get existing svg graph
     let svg = document.getElementById('svgGraph');
 
@@ -293,7 +294,7 @@ function drawNeighbors() {
     group.setAttribute('id', 'svgNeighborGroup');
 
     // get specified face id
-    let faceId = document.getElementById("faceNeighbor").value;
+    // let faceId = document.getElementById("faceNeighbor").value;
     
     // get all neighboring face ids and draw new polygons
     let neighborFaceIds = userGraph.getFace(faceId).getNeighbors();
@@ -374,7 +375,7 @@ function onClick() {
         reader.onload = function(e)
         {
             document.getElementById('output').innerHTML = e.target.result;
-            drawGraph(JSON.parse(e.target.result));
+            drawGraph(JSON.parse(e.target.result));  // constructs an HEGraph object and draws an SVG
         };
 
         reader.readAsBinaryString(file.files[0]);

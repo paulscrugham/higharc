@@ -17,16 +17,17 @@
 <br>
 <p>Algorithm 2: find face neighbors</p>
 <form>
-    <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors()">
+    <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors(this.value)">
     <!-- <input type="text" placeholder="Enter starting face" id="faceNeighbor"/> -->
     <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
-    <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase layers</button>
+    <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase neighbors</button>
 </form>
 <br>
 <p>Algorithm 3: layers from starting face</p>
 <form>
     <input type="text" placeholder="Enter starting face" id="faceLayersStart"/>
-    <input type="range" id="faceLayersNumber" min="0" max="10" value="0" oninput="drawLayers()">
+    <button type="button" onclick="computeLayers(faceLayersStart.value)">Compute layers</button>
+    <input type="range" id="faceLayersNumber" min="0" max="10" value="0" oninput="drawLayers(this.value)">
     <!-- <input type="text" placeholder="Enter layer number" id="faceLayersNumber"/> -->
     <!-- <button type="button" onclick="drawLayers()">Draw layers</button> -->
     <button type="button" onclick="eraseElement('svgLayerGroup')">Erase layers</button>
