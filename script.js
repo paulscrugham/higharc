@@ -91,16 +91,22 @@ class HEGraph {
     constructor(graph) {
         this.vertices = graph.vertices;
         this.edges = graph.edges;
+        let xMax = this.vertices[0][0];
+        let yMax = this.vertices[0][1];
+        let xMin = xMax;
+        let yMin = yMax;
         this.v = this.buildVertices(); // call function to create Vertices
         this.e = this.buildEdges(); // call function to create Edges
         this.f = this.buildFaces(); // call function to create Faces
         this.exterior;  // class member to track which face is the exterior face
+
     }
 
     buildVertices() {
         const v = [];
         for (let i = 0; i < this.vertices.length; i++) {
             v.push(new Vertex(this.vertices[i][0], this.vertices[i][1], i));
+            
         }
         
         return v;
@@ -136,6 +142,7 @@ class HEGraph {
         let fCounter = 0;
         let maxLength = 0;
         let exteriorFaceId;
+
 
         // this for loop could be more efficient - could skip edges that have been walked
         for (let i  = 0; i < this.e.length; i++) {
