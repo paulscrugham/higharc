@@ -23,6 +23,7 @@ class Vertex {
     sortEdges() {
         this.edges.sort(this.cross);
 
+        // chain half edges around each vertex
         let prev = this.edges[this.edges.length - 1];
         for (let i = 0; i < this.edges.length; i++) {
             prev.reverse.next = this.edges[i];
@@ -94,14 +95,59 @@ class HEGraph {
         this.v = this.buildVertices(); // call function to create Vertices
         this.e = this.buildEdges(); // call function to create Edges
         this.f = this.buildFaces(); // call function to create Faces
-        this.exterior;  // class member to track which face is the exterior face
+        this.xMax = this.vertices[0][0];
+        this.yMax = this.vertices[0][1];
+        this.xMin = this.xMax;
+        this.yMin = this.yMax;
+    }
+
+    max(a, b) {
+        if (a > b) {
+            return a;
+        } else {
+            return b;
+        }
+    }
+
+    min(a, b) {
+        if (a < b) {
+            return a;
+        } else {
+            return b;
+        }
     }
 
     buildVertices() {
         const v = [];
-        for (let i = 0; i < this.vertices.length; i++) {
+        let i = 0;
+        // TODO: save highest vertex id
+        for (i = 0; i < this.vertices.length; i++) {
             v.push(new Vertex(this.vertices[i][0], this.vertices[i][1], i));
+            this.xMax = this.max(this.xMax, this.vertices[i][0]);
+            this.yMax = this.max(this.yMax, this.vertices[i][1]);
+            this.xMin = this.min(this.xMin, this.vertices[i][0]);
+            this.yMin = this.min(this.yMin, this.vertices[i][1]);
         }
+        
+        // create bounding box verts
+        // console.log(this.xMax, this.yMax, this.xMin, this.yMin);
+        this.xMax++;
+        this.yMax++;
+        this.xMin--;
+        this.yMin--;
+        // TODO: save id (i) for each vertex and push as edge
+        let topLeft = new Vertex(this.xMin, this.yMin, i++);
+        let topRight = new Vertex(this.xMax, this.yMin, i++);
+        let bottomRight = new Vertex(this.xMax, this.yMax, i++);
+        let bottomLeft = new Vertex(this.xMin, this.yMax, i++);
+
+        // console.log(topLeft, topRight, bottomRight, bottomLeft);
+        // create bounding box edges
+        // this.edges.push([topLeft, topRight]);
+        // this.edges.push([topRight, bottomRight]);
+        // this.edges.push([bottomRight, bottomLeft]);
+        // this.edges.push([bottomLeft, topLeft]);
+
         
         return v;
     }
