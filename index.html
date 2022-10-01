@@ -7,6 +7,7 @@
     <button type="button" onclick="algo2tests()">Run algorithm 2 tests</button>
 </form>
 <br>
+<p>Algorithm 1: draw graph from JSON</p>
 <form>
     <input type="file" id="graphFile"/>
     <button type="button" onclick="onClick()">Draw graph!</button>
@@ -14,11 +15,23 @@
 <br>
 <div id="output"></div>
 <br>
+<p>Algorithm 2: find face neighbors</p>
 <form>
-    <input type="text" id="faceNeighbor"/>
-    <button type="button" onclick="drawNeighbors()">Draw neighbors</button>
-    <button type="button" onclick="eraseNeighbors()">Erase neighbors</button>
+    <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors()">
+    <!-- <input type="text" placeholder="Enter starting face" id="faceNeighbor"/> -->
+    <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
+    <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase layers</button>
 </form>
+<br>
+<p>Algorithm 3: layers from starting face</p>
+<form>
+    <input type="text" placeholder="Enter starting face" id="faceLayersStart"/>
+    <input type="range" id="faceLayersNumber" min="0" max="10" value="0" oninput="drawLayers()">
+    <!-- <input type="text" placeholder="Enter layer number" id="faceLayersNumber"/> -->
+    <!-- <button type="button" onclick="drawLayers()">Draw layers</button> -->
+    <button type="button" onclick="eraseElement('svgLayerGroup')">Erase layers</button>
+</form>
+<br>
 
 
 <script type="text/javascript" src="script.js"></script>

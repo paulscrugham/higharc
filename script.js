@@ -8,7 +8,7 @@ class Vertex {
         this.edges = [];
     }
 
-    /** 
+    /**
      * Computes the cross product of two points aroud a center.
      * Used in sortEdges as a comparator function to sort edges around a Vertex.
      */
@@ -164,7 +164,6 @@ class HEGraph {
     }
 
     buildFaces() {
-        // TODO: cull outer face from list once all faces have been built
         const f = [];
         let fCounter = 0;
         let extFace;
@@ -220,23 +219,75 @@ class HEGraph {
             }
         }
     }
+
+    /**
+     * Computes "layers" of neighboring face sets from a starting face.
+     */
+    getLayers(faceId) {
+        const layers = [[faceId]];
+        const found = new Array(this.f.length).fill(false);
+        found[faceId] = true;
+        let countFound = 1;
+
+        // iterate till all faces have been found
+        while (countFound < this.f.length) {
+            const currLayer = [];
+            // iterate over each face in the last layer of faces
+            for (let i = 0; i < layers[layers.length - 1].length; i++) {
+                let neighbors = userGraph.getFace(layers[layers.length - 1][i]).getNeighbors();
+                // iterate over the neighbor of each face and determine if it has been found
+                for (let j = 0; j < neighbors.length; j++) {
+                    if (!found[neighbors[j]]) {
+                        currLayer.push(neighbors[j]);
+                        found[neighbors[j]] = true;
+                        countFound++;
+                    }
+                }
+            }
+            layers.push(currLayer);
+        }
+        return layers;
+    }
 }
 
 let userGraph;
 let ns = "http://www.w3.org/2000/svg";
 let mult = 100;
 
+function drawLayers() {
+    // get existing svg graph
+    let svg = document.getElementById('svgGraph');
+
+    eraseElement('svgLayerGroup');  // clear any existing layer svg
+
+    // get specified face id
+    let faceId = document.getElementById("faceLayersStart").value;
+    let layerNum = document.getElementById("faceLayersNumber").value;
+    let layers = userGraph.getLayers(faceId);
+
+    // create group for neighbor faces
+    group = document.createElementNS(ns, 'g');
+    group.setAttribute('id', 'svgLayerGroup');
+
+    // draw layer
+    for (let i = 0; i < layers[layerNum].length; i++) {
+        let face = userGraph.getFace(layers[layerNum][i]);
+        let svgFace = createSVGPoly(face);
+        svgFace.setAttribute('fill', 'None');
+        svgFace.setAttribute('stroke', 'red');
+        svgFace.setAttribute('stroke-width', '3');
+        group.append(svgFace);
+        console.log(face);
+    }
+    svg.append(group);
+
+}
+
 function drawNeighbors() {
     // get existing svg graph
     let svg = document.getElementById('svgGraph');
 
-    // create group for neighbor faces
-    let group = document.getElementById('svgNeighborGroup');
-
-    // clear previous neighbor group if one exists
-    if (typeof(group) != "undefined" && group != null) {
-        group.parentNode.removeChild(group);
-    }
+    eraseElement('svgNeighborGroup');  // clear any existing neighbor svg
 
     group = document.createElementNS(ns, 'g');
     group.setAttribute('id', 'svgNeighborGroup');
@@ -250,21 +301,21 @@ function drawNeighbors() {
     for (let i = 0; i < neighborFaceIds.length; i++) {
         let svgFace = createSVGPoly(userGraph.getFace(neighborFaceIds[i]));
         svgFace.setAttribute('fill', 'None');
-        svgFace.setAttribute('stroke', 'lime');
+        svgFace.setAttribute('stroke', 'red');
         svgFace.setAttribute('stroke-width', '3');
         group.append(svgFace);
     }
     let svgFace = createSVGPoly(userGraph.getFace(faceId));
     svgFace.setAttribute('fill', 'None');
-    svgFace.setAttribute('stroke', 'red');
+    svgFace.setAttribute('stroke', 'purple');
     svgFace.setAttribute('stroke-width', '3');
     group.append(svgFace);
 
     svg.append(group);
 }
 
-function eraseNeighbors() {
-    let group = document.getElementById('svgNeighborGroup');
+function eraseElement(elementId) {
+    let group = document.getElementById(elementId);
     if (typeof(group) != "undefined" && group != null) {
         group.parentNode.removeChild(group);
     }
