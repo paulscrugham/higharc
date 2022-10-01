@@ -164,39 +164,31 @@ class HEGraph {
         // TODO: cull outer face from list once all faces have been built
         const f = [];
         let fCounter = 0;
-        let maxLength = 0;
-        let exteriorFaceId;
 
         // this for loop could be more efficient - could skip edges that have been walked
-        for (let i  = 0; i < this.e.length; i++) {
+        for (let i = 0; i < this.e.length; i++) {
             if (this.e[i].visited == false) {
-                let currLen = 0;
                 let face = new Face(fCounter, this.e[i]);
                 
                 let curr = this.e[i].next;
                 while (!curr.visited) {
-                    currLen += 1;
                     curr.setFace(face);
                     curr.visited = true;
                     curr = curr.next;
                 }
-                if (currLen > maxLength) {
-                    exteriorFaceId = fCounter;
-                    maxLength = currLen;
-                }
                 
                 if (i > 1) {
+                    // add face if interior
                     fCounter += 1;
                     f.push(face);
                 }
-                
             }
         }
 
-        // iterate over the half edges to remove references to the exterior face
-        for (let i = 0; i < this.e.length; i++) {
+        // iterate over the exterior face and remove interior face references to itself
+        // for (let i = 0; i < this.e.length; i++) {
 
-        }
+        // }
         console.log(f);
 
         return f;
