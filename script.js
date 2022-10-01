@@ -91,14 +91,11 @@ class Face {
 class HEGraph {
     constructor(graph) {
         this.vertices = graph.vertices;
-        this.edges = graph.edges;
+        this.edges = [null].concat(graph.edges);
         this.v = this.buildVertices(); // call function to create Vertices
         this.e = this.buildEdges(); // call function to create Edges
         this.f = this.buildFaces(); // call function to create Faces
-        this.xMax = this.vertices[0][0];
-        this.yMax = this.vertices[0][1];
-        this.xMin = this.xMax;
-        this.yMin = this.yMax;
+        this.keyVert;  // pointer to Vertex
     }
 
     max(a, b) {
@@ -120,35 +117,22 @@ class HEGraph {
     buildVertices() {
         const v = [];
         let i = 0;
-        // TODO: save highest vertex id
+        let yMax = this.vertices[0][1];
+        let keyVertId = this.vertices;
+        // build vertices
         for (i = 0; i < this.vertices.length; i++) {
-            v.push(new Vertex(this.vertices[i][0], this.vertices[i][1], i));
-            this.xMax = this.max(this.xMax, this.vertices[i][0]);
-            this.yMax = this.max(this.yMax, this.vertices[i][1]);
-            this.xMin = this.min(this.xMin, this.vertices[i][0]);
-            this.yMin = this.min(this.yMin, this.vertices[i][1]);
+            let newVert = new Vertex(this.vertices[i][0], this.vertices[i][1], i);
+            v.push(newVert);
+            if (this.vertices[i][1] > yMax) {
+                keyVertId = i;
+                yMax = this.vertices[i][1];
+            }
         }
-        
-        // create bounding box verts
-        // console.log(this.xMax, this.yMax, this.xMin, this.yMin);
-        this.xMax++;
-        this.yMax++;
-        this.xMin--;
-        this.yMin--;
-        // TODO: save id (i) for each vertex and push as edge
-        let topLeft = new Vertex(this.xMin, this.yMin, i++);
-        let topRight = new Vertex(this.xMax, this.yMin, i++);
-        let bottomRight = new Vertex(this.xMax, this.yMax, i++);
-        let bottomLeft = new Vertex(this.xMin, this.yMax, i++);
+        // create a key Vertex at the bottom right of the graph
+        this.keyVert = new Vertex(this.vertices[keyVertId][0] + 1, this.vertices[keyVertId][1] + 1, i);
+        v.push(this.keyVert);
+        this.edges[0] = [keyVertId, i];
 
-        // console.log(topLeft, topRight, bottomRight, bottomLeft);
-        // create bounding box edges
-        // this.edges.push([topLeft, topRight]);
-        // this.edges.push([topRight, bottomRight]);
-        // this.edges.push([bottomRight, bottomLeft]);
-        // this.edges.push([bottomLeft, topLeft]);
-
-        
         return v;
     }
 
@@ -200,16 +184,20 @@ class HEGraph {
                     exteriorFaceId = fCounter;
                     maxLength = currLen;
                 }
-                fCounter += 1;
-                f.push(face);
+                
+                if (i > 1) {
+                    fCounter += 1;
+                    f.push(face);
+                }
+                
             }
         }
-        console.log(exteriorFaceId);
 
         // iterate over the half edges to remove references to the exterior face
-        // for (let i = 0; i < this.e.length; i++) {
+        for (let i = 0; i < this.e.length; i++) {
 
-        // }
+        }
+        console.log(f);
 
         return f;
     }
@@ -322,7 +310,7 @@ function drawGraph(g) {
         svg.append(poly);
         // console.log(points);
     }
-    console.log(userGraph.getFaces());
+    // console.log(userGraph.getFaces());
 }
 
 function onClick() {
