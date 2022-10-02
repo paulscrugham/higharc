@@ -143,7 +143,7 @@ class HEGraph {
         this.keyVert = new Vertex(this.vertices[keyVertId][0] + 1, this.vertices[keyVertId][1] + 1, i);
         v.push(this.keyVert);
         this.edges[0] = [keyVertId, i];
-        console.log(this.xMax, this.yMax, this.xMin, this.yMin);
+        // console.log(this.xMax, this.yMax, this.xMin, this.yMin);
         return v;
     }
 
