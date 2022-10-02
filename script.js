@@ -93,6 +93,12 @@ function drawGraph(g) {
     group = document.createElementNS(ns, 'g');
     group.setAttribute('id', 'svgFaceGroup');
 
+    let xShift = -hegraph.xMin;
+    let yShift = -hegraph.yMin;
+
+    console.log(xShift, yShift)
+    console.log(hegraph.xMin, hegraph.yMin);
+
     // add polygons
     let faces = hegraph.getFaces();
     for (let i = 0; i < faces.length; i++) {
@@ -101,7 +107,9 @@ function drawGraph(g) {
         let points = "";
         let verts = faces[i].getVertices();
         for (let j = 0; j < verts.length; j++) {
-            points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
+            // 1. shift coordinate to system with [0, 0] origin 
+            // 2. scale coordinate by factor (factor determined by mapping largest dimension to svg canvas)
+            points += ((verts[j].x + xShift) * mult) + "," + ((verts[j].y + yShift) * mult) + " ";
         }
         poly.setAttribute('points', points);
         poly.setAttribute('style', polyStyle);
