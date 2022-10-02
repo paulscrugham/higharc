@@ -1,3 +1,19 @@
+function max(a, b) {
+    if (a > b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
+function min(a, b) {
+    if (a < b) {
+        return a;
+    } else {
+        return b;
+    }
+}
+
 class Vertex {
     constructor(x, y, index) {
         this.x = x;
@@ -93,47 +109,41 @@ class HEGraph {
     constructor(graph) {
         this.vertices = graph.vertices;
         this.edges = [null].concat(graph.edges);
+        this.xMax = this.vertices[0][0];
+        this.yMax = this.vertices[0][1];
+        this.xMin = this.xMax;
+        this.yMin = this.yMax;
         this.v = this.buildVertices(); // call function to create Vertices
         this.e = this.buildEdges(); // call function to create Edges
         this.f = this.buildFaces(); // call function to create Faces
         this.keyVert;  // pointer to Vertex
-    }
 
-    max(a, b) {
-        if (a > b) {
-            return a;
-        } else {
-            return b;
-        }
-    }
-
-    min(a, b) {
-        if (a < b) {
-            return a;
-        } else {
-            return b;
-        }
     }
 
     buildVertices() {
         const v = [];
         let i = 0;
-        let yMax = this.vertices[0][1];
         let keyVertId = this.vertices;
         // build vertices
         for (i = 0; i < this.vertices.length; i++) {
             let newVert = new Vertex(this.vertices[i][0], this.vertices[i][1], i);
             v.push(newVert);
-            if (this.vertices[i][1] > yMax) {
+            
+            if (this.vertices[i][1] > this.yMax) {
                 keyVertId = i;
-                yMax = this.vertices[i][1];
+                this.yMax = this.vertices[i][1];
             }
+
+            this.xMax = max(this.xMax, this.vertices[i][0]);
+            this.xMin = min(this.xMin, this.vertices[i][0]);
+            this.yMin = min(this.yMin, this.vertices[i][1]);
+
         }
         // create a key Vertex at the bottom right of the graph
         this.keyVert = new Vertex(this.vertices[keyVertId][0] + 1, this.vertices[keyVertId][1] + 1, i);
         v.push(this.keyVert);
         this.edges[0] = [keyVertId, i];
-
+        console.log(this.xMax, this.yMax, this.xMin, this.yMin);
         return v;
     }
 

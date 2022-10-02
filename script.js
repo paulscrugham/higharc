@@ -2,8 +2,12 @@ console.log("Hello! This is my higharch challenge");
 
 let userGraph;
 let layers;
-let ns = "http://www.w3.org/2000/svg";
-let mult = 100;
+const ns = "http://www.w3.org/2000/svg";
+const mult = 100;
+const SVGDIM_X = document.getElementById("svgGraph").getAttribute('width');
+const SVGDIM_Y = document.getElementById("svgGraph").getAttribute('height');
+const SVGPAD_X = 20;
+const SVGPAD_Y = 20;
 
 function computeLayers(faceId) {
     layers = userGraph.computeLayers(faceId);
@@ -42,9 +46,6 @@ function drawNeighbors(faceId) {
 
     group = document.createElementNS(ns, 'g');
     group.setAttribute('id', 'svgNeighborGroup');
-
-    // get specified face id
-    // let faceId = document.getElementById("faceNeighbor").value;
     
     // get all neighboring face ids and draw new polygons
     let neighborFaceIds = userGraph.getFace(faceId).getNeighbors();
@@ -88,22 +89,12 @@ function createSVGPoly(face) {
 
 function drawGraph(g) {
     let hegraph = new HEGraph(g);
-    userGraph = hegraph;
-
     let svg = document.getElementById("svgGraph");
 
-    // clear old svg if one exists
-    if (typeof(svg) != "undefined" && svg != null) {
-        svg.parentNode.removeChild(svg);
-    }
+    eraseElement('svgFaceGroup');  // clear any existing face svg elements
 
-    // set up SVG
-    svg = document.createElementNS(ns, "svg");
-    svg.setAttribute("width", "500");
-    svg.setAttribute("height", "500");
-    svg.setAttribute("id", "svgGraph");
-    svg.style.backgroundColor = "beige";
-    document.body.appendChild(svg);
+    group = document.createElementNS(ns, 'g');
+    group.setAttribute('id', 'svgFaceGroup');
 
     // add polygons
     let faces = hegraph.getFaces();
@@ -112,10 +103,10 @@ function drawGraph(g) {
         let poly = createSVGPoly(faces[i]);
         poly.setAttribute('style', polyStyle);
         poly.setAttribute('id', i);
-        svg.append(poly);
-        // console.log(points);
+        group.append(poly);
     }
-    // console.log(userGraph.getFaces());
+    svg.append(group);
+    userGraph = hegraph;
 }
 
 function onClick() {
@@ -127,7 +118,7 @@ function onClick() {
 
         reader.onload = function(e)
         {
-            document.getElementById('output').innerHTML = e.target.result;
+            // document.getElementById('output').innerHTML = e.target.result;
             drawGraph(JSON.parse(e.target.result));  // constructs an HEGraph object and draws an SVG
         };
 
