@@ -1,3 +1,5 @@
+// TODO: replace group removal with child removal
+
 console.log("Hello! This is my higharch challenge");
 
 let userGraph;
@@ -82,17 +84,6 @@ function eraseElement(elementId) {
     }
 }
 
-function createSVGPoly(face) {
-    let poly = document.createElementNS(ns, 'polygon');
-    let points = "";
-    let verts = face.getVertices();
-    for (let j = 0; j < verts.length; j++) {
-        points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
-    }
-    poly.setAttribute('points', points);
-    return poly;
-}
-
 function drawGraph(g) {
     let hegraph = new HEGraph(g);
     let svg = document.getElementById("svgGraph");
@@ -106,7 +97,13 @@ function drawGraph(g) {
     let faces = hegraph.getFaces();
     for (let i = 0; i < faces.length; i++) {
         let polyStyle = "fill:rgb(" + 50 / faces.length * i + ", " + 255 / faces.length * i + ", " + 255 / faces.length * i + ")";
-        let poly = createSVGPoly(faces[i]);
+        let poly = document.createElementNS(ns, 'polygon');
+        let points = "";
+        let verts = faces[i].getVertices();
+        for (let j = 0; j < verts.length; j++) {
+            points += (verts[j].x * mult) + "," + (verts[j].y * mult) + " ";
+        }
+        poly.setAttribute('points', points);
         poly.setAttribute('style', polyStyle);
         poly.setAttribute('id', i);
         group.append(poly);
