@@ -28,8 +28,10 @@ function drawLayers(layerId) {
 
     // draw layer
     for (let i = 0; i < layers[layerId].length; i++) {
-        let face = userGraph.getFace(layers[layerId][i]);
-        let svgFace = createSVGPoly(face);
+        // let face = userGraph.getFace(layers[layerId][i]);
+        // let svgFace = createSVGPoly(face);
+        let svgFace = document.createElementNS(ns, 'use');
+        svgFace.setAttribute('href', '#' + layers[layerId][i]);
         svgFace.setAttribute('fill', 'None');
         svgFace.setAttribute('stroke', 'red');
         svgFace.setAttribute('stroke-width', '3');
@@ -54,13 +56,17 @@ function drawNeighbors(faceId) {
     slider.setAttribute('max', userGraph.getFaces().length - 1);
     
     for (let i = 0; i < neighborFaceIds.length; i++) {
-        let svgFace = createSVGPoly(userGraph.getFace(neighborFaceIds[i]));
+        // let svgFace = createSVGPoly(userGraph.getFace(neighborFaceIds[i]));
+        let svgFace = document.createElementNS(ns, 'use');
+        svgFace.setAttribute('href', '#' + neighborFaceIds[i]);
         svgFace.setAttribute('fill', 'None');
         svgFace.setAttribute('stroke', 'red');
         svgFace.setAttribute('stroke-width', '3');
         group.append(svgFace);
     }
-    let svgFace = createSVGPoly(userGraph.getFace(faceId));
+    // let svgFace = createSVGPoly(userGraph.getFace(faceId));
+    let svgFace = document.createElementNS(ns, 'use');
+    svgFace.setAttribute('href', '#' + faceId);
     svgFace.setAttribute('fill', 'None');
     svgFace.setAttribute('stroke', 'purple');
     svgFace.setAttribute('stroke-width', '3');
