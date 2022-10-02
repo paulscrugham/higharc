@@ -6,10 +6,10 @@ let userGraph;
 let layers;
 const ns = "http://www.w3.org/2000/svg";
 const mult = 100;
-const SVGDIM_X = document.getElementById("svgGraph").getAttribute('width');
-const SVGDIM_Y = document.getElementById("svgGraph").getAttribute('height');
-const SVGPAD_X = 20;
-const SVGPAD_Y = 20;
+
+const SVGPAD = 20;
+const SVGDIM_X = document.getElementById("svgGraph").getAttribute('width') - SVGPAD * 2;
+const SVGDIM_Y = document.getElementById("svgGraph").getAttribute('height') - SVGPAD * 2;
 
 function computeLayers(faceId) {
     layers = userGraph.computeLayers(faceId);
@@ -96,15 +96,10 @@ function drawGraph(g) {
     // calculate scale factor
     let scale;
     if (hegraph.xMax - hegraph.xMin >= hegraph.yMax - hegraph.yMin) {
-        // x direction is larger
         scale = SVGDIM_X / (hegraph.xMax - hegraph.xMin);
     } else {
         scale = SVGDIM_Y / (hegraph.yMax - hegraph.yMin);
     }
-
-    console.log(scale);
-
-
 
     // add polygons
     let faces = hegraph.getFaces();
@@ -114,9 +109,7 @@ function drawGraph(g) {
         let points = "";
         let verts = faces[i].getVertices();
         for (let j = 0; j < verts.length; j++) {
-            // 1. shift coordinate to system with [0, 0] origin 
-            // 2. scale coordinate by factor (factor determined by mapping largest dimension to svg canvas)
-            points += ((verts[j].x - hegraph.xMin) * scale) + "," + ((verts[j].y -hegraph.yMin) * scale) + " ";
+            points += ((verts[j].x - hegraph.xMin) * scale + SVGPAD) + "," + ((verts[j].y - hegraph.yMin) * scale + SVGPAD) + " ";
         }
         poly.setAttribute('points', points);
         poly.setAttribute('style', polyStyle);
