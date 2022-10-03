@@ -343,6 +343,10 @@ class HEGraph {
         return this.f[id];
     }
 
+    getFaceCount() {
+        return this.f.length;
+    }
+
     /**
      * Computes "layers" of neighboring face sets from a starting face.
      * This operation takes O(F) time and uses O(F) space. Even though each Edge of each Face
