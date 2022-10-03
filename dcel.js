@@ -198,8 +198,7 @@ class HEGraph {
         // this for loop could be more efficient - could skip edges that have been walked
         for (let i = 0; i < this.e.length; i++) {
             if (this.e[i].visited == false) {
-                let face = new Face(fCounter, this.e[i]);
-                
+                let face = new Face(fCounter, this.e[i]);               
                 let curr = this.e[i].next;
                 while (!curr.visited) {
                     curr.setFace(face);
@@ -268,16 +267,31 @@ class HEGraph {
         let face = this.getFace(faceId);
         let edges = [];
         let curr = face.keyEdge;
+        // initialize bBox values
+        let minX = curr.from.x;
+        let minY = curr.from.y;
+        let maxX = minX;
+        let maxY = minY;
+        
         do {
             edges.push(curr);
             curr = curr.next;
+            // update bBox values
+            minX = min(minX, curr.from.x);
+            minY = min(minY, curr.from.y);
+            maxX = max(maxX, curr.from.x);
+            maxY = max(maxY, curr.from.y);
         } while (curr != face.keyEdge);
 
-        // TODO: check bounding box first
-        let odd = false;
         let x = point[0];
         let y = point[1];
-        
+
+        // check if point lies outside face bounding box
+        if (minX > x || x > maxX || minY > y || maxY < y)
+            return false;
+
+        // check if point intersects 
+        let odd = false;
         for (let i = 0; i < edges.length; i++) {
             let a = edges[i].from;
             let b = edges[i].to;
@@ -291,6 +305,6 @@ class HEGraph {
                 }
             }
         }
-        return odd; 
+        return odd;
     }
 }
