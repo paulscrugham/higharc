@@ -1,16 +1,14 @@
-// TODO: replace group removal with child removal
-
-console.log("Hello! This is my higharch challenge");
-
-let userGraph;
-let layers;
+let userGraph;  // global variable to store current graph
+let layers;  // global variable to store current layer set for iterating
 const ns = "http://www.w3.org/2000/svg";
-const mult = 100;
 
 const SVGPAD = 20;
 const SVGDIM_X = document.getElementById("svgGraph").getAttribute('width') - SVGPAD * 2;
 const SVGDIM_Y = document.getElementById("svgGraph").getAttribute('height') - SVGPAD * 2;
 
+/**
+ * Calculates the scale factor to fit the graph to the SVG canvas.
+ */
 function getGraphScale(g) {
     if (g.xMax - g.xMin >= g.yMax - g.yMin) {
         return SVGDIM_X / (g.xMax - g.xMin);
@@ -19,6 +17,10 @@ function getGraphScale(g) {
     }
 }
 
+/**
+ * Finds which face the point is inside of for algorithm 3 and 
+ * highlights the SVG polygon.
+ */
 function findFace(x, y) {
     // draw point
     let svg = document.getElementById('svgGraph');
@@ -48,10 +50,11 @@ function findFace(x, y) {
     }
     group.append(circle);
     svg.append(group);
-
-    // console.log(userGraph.pointInFace(4, [x, y]));
 }
 
+/**
+ * Computes the layers for algorithm 4.
+ */
 function computeLayers(faceId) {
     layers = userGraph.computeLayers(faceId);
     // update slider length
@@ -59,6 +62,9 @@ function computeLayers(faceId) {
     slider.setAttribute('max', layers.length - 1);
 }
 
+/** 
+ * Draws the SVG layers for algorithm 4.
+*/
 function drawLayers(layerId) {
     // get existing svg graph
     let svg = document.getElementById('svgGraph');
@@ -83,6 +89,9 @@ function drawLayers(layerId) {
     svg.append(group);
 }
 
+/**
+ * Draws neighboring SVG faces for algorithm 2.
+ */
 function drawNeighbors(faceId) {
     // get existing svg graph
     let svg = document.getElementById('svgGraph');
@@ -118,6 +127,9 @@ function drawNeighbors(faceId) {
     svg.append(group);
 }
 
+/**
+ * Used to clear the SVG graph of the specified element.
+ */
 function eraseElement(elementId) {
     let group = document.getElementById(elementId);
     if (typeof(group) != "undefined" && group != null) {
@@ -125,6 +137,9 @@ function eraseElement(elementId) {
     }
 }
 
+/**
+ * Given input graph data, builds a DCEL object and draws the interior faces as SVG.
+ */
 function drawGraph(g) {
     let hegraph = new HEGraph(g);
     let svg = document.getElementById("svgGraph");
@@ -156,6 +171,9 @@ function drawGraph(g) {
     userGraph = hegraph;
 }
 
+/**
+ * Used to load a JSON file and call drawGraph().
+ */
 function onClick() {
     let file = document.getElementById('graphFile');
 
@@ -165,7 +183,6 @@ function onClick() {
 
         reader.onload = function(e)
         {
-            // document.getElementById('output').innerHTML = e.target.result;
             drawGraph(JSON.parse(e.target.result));  // constructs an HEGraph object and draws an SVG
         };
 
