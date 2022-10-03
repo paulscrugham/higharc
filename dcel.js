@@ -165,19 +165,21 @@ class HEGraph {
     }
 
     buildEdges() {
-        const e = new Array(this.edges.length * 2);
+        const e = [];
         let from, to;
         for (let i = 0; i < this.edges.length; i++) {
             from = this.v[this.edges[i][0]];
             to = this.v[this.edges[i][1]];
 
             // create edges
-            e[2*i] = new Edge(from, to);
-            e[2*i+1] = new Edge(to, from);
-
+            let left = new Edge(from, to);
+            let right = new Edge(to, from);
             // set edge reverse
-            e[2*i].reverse = e[2*i+1];
-            e[2*i+1].reverse = e[2*i];
+            left.reverse = right;
+            right.reverse = left;
+
+            e.push(left);
+            e.push(right);
         }
 
         // sort outgoing half edges around each vert
