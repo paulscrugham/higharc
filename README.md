@@ -8,6 +8,10 @@
 
 Simply open the `home.html` file in the project directory
 
+## Tests
+
+Test JSON graphs are located in the tests/ directory
+
 ## Files
 
 `script.js` contains the code to draw the graph SVG
