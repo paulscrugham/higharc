@@ -256,7 +256,7 @@ class HEGraph {
             const currLayer = [];
             // iterate over each face in the last layer of faces
             for (let i = 0; i < layers[layers.length - 1].length; i++) {
-                let neighbors = userGraph.getFace(layers[layers.length - 1][i]).getNeighbors();
+                let neighbors = this.getFace(layers[layers.length - 1][i]).getNeighbors();
                 // iterate over the neighbor of each face and determine if it has been found
                 for (let j = 0; j < neighbors.length; j++) {
                     if (!found[neighbors[j]]) {
