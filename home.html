@@ -19,7 +19,9 @@
                     <button type="button" onclick="onClick()">Draw graph!</button>
                 </form>
                 <br>
-                <!-- <div id="output"></div> -->
+                <form>
+                    <button type="button" onclick="algorithm1_tests()">Run algorithm 1 tests</button>
+                </form>
                 <br>
                 <p>Algorithm 2: find face neighbors</p>
                 <form>
@@ -27,6 +29,10 @@
                     <!-- <input type="text" placeholder="Enter starting face" id="faceNeighbor"/> -->
                     <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
                     <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase</button>
+                </form>
+                <br>
+                <form>
+                    <button type="button" onclick="algorithm2_tests()">Run algorithm 2 tests</button>
                 </form>
                 <br>
                 <p>Algorithm 3: find the face the point is contained within</p>
@@ -60,7 +66,8 @@
 
 <script type="text/javascript" src="script.js"></script>
 <script type="text/javascript" src="dcel.js"></script>
-<script type="text/javascript" src="algo2tests.js"></script>
+<script type="text/javascript" src="algorithm1_tests.js"></script>
+<script type="text/javascript" src="algorithm2_tests.js"></script>
 <!-- <script type="text/javascript" src="rot_tests.js"></script> -->
 
 </body>
