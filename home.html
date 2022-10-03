@@ -19,10 +19,7 @@
                     <button type="button" onclick="onClick()">Draw graph!</button>
                 </form>
                 <br>
-                <form>
-                    <button type="button" onclick="algorithm1_tests()">Run algorithm 1 tests</button>
-                </form>
-                <br>
+
                 <p>Algorithm 2: find face neighbors</p>
                 <form>
                     <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors(this.value)">
@@ -30,10 +27,7 @@
                     <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
                     <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase</button>
                 </form>
-                <br>
-                <form>
-                    <button type="button" onclick="algorithm2_tests()">Run algorithm 2 tests</button>
-                </form>
+
                 <br>
                 <p>Algorithm 3: find the face the point is contained within</p>
                 <form>
@@ -42,6 +36,7 @@
                     <button type="button" onclick="findFace(findPointX.value, findPointY.value)">Find face</button>
                     <button type="button" onclick="eraseElement('svgFindFace')">Erase</button>
                 </form>
+
                 <br>
                 <p>Algorithm 4: layers from starting face</p>
                 <form>
@@ -52,9 +47,18 @@
                     <!-- <button type="button" onclick="drawLayers()">Draw layers</button> -->
                     <button type="button" onclick="eraseElement('svgLayerGroup')">Erase</button>
                 </form>
+                <br>
+                <p>Tests (output displayed in browser console)</p>
+                <form>
+                    <button type="button" onclick="algorithm1_tests()">Run algorithm 1 tests</button>
+                    <button type="button" onclick="algorithm2_tests()">Run algorithm 2 tests</button>
+                    <button type="button" onclick="algorithm3_tests()">Run algorithm 3 tests</button>
+                    <button type="button" onclick="algorithm4_tests()">Run algorithm 4 tests</button>
+                </form>
+                <br>
             </td style="padding-left: 40px">
             <td>
-                <svg id="svgGraph" width="500" height="500" style="background-color: beige;"></svg>
+                <svg id="svgGraph" width="600" height="600" style="background-color: beige;"></svg>
             </td>
         </tr>
     </table>
@@ -68,6 +72,8 @@
 <script type="text/javascript" src="dcel.js"></script>
 <script type="text/javascript" src="algorithm1_tests.js"></script>
 <script type="text/javascript" src="algorithm2_tests.js"></script>
+<script type="text/javascript" src="algorithm3_tests.js"></script>
+<script type="text/javascript" src="algorithm4_tests.js"></script>
 <!-- <script type="text/javascript" src="rot_tests.js"></script> -->
 
 </body>
