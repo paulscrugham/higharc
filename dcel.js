@@ -31,24 +31,19 @@ class Vertex {
      */
     cross(a, b) {
         // A. case where point a is right of center and b is left of center
-        if (a.to.x - a.from.x >= 0 && b.to.x - b.from.x < 0) {
+        if (a.to.x - a.from.x >= 0 && b.to.x - b.from.x < 0)
             return -1;
-        }
         // B. case where point a is left of center and b is right of center
-        if (a.to.x - a.from.x < 0 && b.to.x - b.from.x >= 0) {
+        if (a.to.x - a.from.x < 0 && b.to.x - b.from.x >= 0)
             return 1;
-        }
         if (a.to.x - a.from.x == 0 && b.to.x - b.from.x == 0) {
             // C. case where a is directly above b (edges are parallel)
-            if (a.to.y - a.from.y >= 0 && b.to.y - b.from.y < 0) {
+            if (a.to.y - a.from.y >= 0 && b.to.y - b.from.y < 0)
                 return -1;
-            }
             // D. case where b is directly above a (edges are parallel)
-            if (a.to.y - a.from.y < 0 && b.to.y - b.from.y >= 0) {
+            if (a.to.y - a.from.y < 0 && b.to.y - b.from.y >= 0)
                 return 1;
-            }
         }
-
         // E. case where a and b are in the same quadrant and cross product can be computed
         return (a.to.x - a.from.x) * (b.to.y - b.from.y) - (a.to.y - a.from.y) * (b.to.x - b.from.x);
     }
