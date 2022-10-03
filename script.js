@@ -11,6 +11,47 @@ const SVGPAD = 20;
 const SVGDIM_X = document.getElementById("svgGraph").getAttribute('width') - SVGPAD * 2;
 const SVGDIM_Y = document.getElementById("svgGraph").getAttribute('height') - SVGPAD * 2;
 
+function getGraphScale(g) {
+    if (g.xMax - g.xMin >= g.yMax - g.yMin) {
+        return SVGDIM_X / (g.xMax - g.xMin);
+    } else {
+        return SVGDIM_Y / (g.yMax - g.yMin);
+    }
+}
+
+function findFace(x, y) {
+    // draw point
+    let svg = document.getElementById('svgGraph');
+
+    eraseElement('svgFindFace');  // clear any existing layer svg
+
+    // create group for point and face
+    group = document.createElementNS(ns, 'g');
+    group.setAttribute('id', 'svgFindFace');
+    let scale = getGraphScale(userGraph);
+
+    let circle = document.createElementNS(ns, 'circle');
+    circle.setAttribute('cx', (x - userGraph.xMin) * scale + SVGPAD);
+    circle.setAttribute('cy', (y - userGraph.yMin) * scale + SVGPAD);
+    circle.setAttribute('r', 5);
+    circle.setAttribute('fill', 'red');
+
+    for (let i = 0; i < userGraph.f.length; i++) {
+        if (userGraph.pointInFace(i, [x, y])) {
+            let svgFace = document.createElementNS(ns, 'use');
+            svgFace.setAttribute('href', '#' + i);
+            svgFace.setAttribute('fill', 'None');
+            svgFace.setAttribute('stroke', 'red');
+            svgFace.setAttribute('stroke-width', '3');
+            group.append(svgFace);
+        }
+    }
+    group.append(circle);
+    svg.append(group);
+
+    // console.log(userGraph.pointInFace(4, [x, y]));
+}
+
 function computeLayers(faceId) {
     layers = userGraph.computeLayers(faceId);
     // update slider length
@@ -94,12 +135,7 @@ function drawGraph(g) {
     group.setAttribute('id', 'svgFaceGroup');
 
     // calculate scale factor
-    let scale;
-    if (hegraph.xMax - hegraph.xMin >= hegraph.yMax - hegraph.yMin) {
-        scale = SVGDIM_X / (hegraph.xMax - hegraph.xMin);
-    } else {
-        scale = SVGDIM_Y / (hegraph.yMax - hegraph.yMin);
-    }
+    let scale = getGraphScale(hegraph);
 
     // add polygons
     let faces = hegraph.getFaces();

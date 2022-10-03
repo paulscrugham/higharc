@@ -277,4 +277,30 @@ class HEGraph {
         }
         return layers;
     }
+
+    pointInFace(faceId, point) {
+        let face = this.getFace(faceId);
+        let edges = [];
+        let curr = face.keyEdge;
+        do {
+            edges.push(curr);
+            curr = curr.next;
+        } while (curr != face.keyEdge);
+
+        // TODO: check bounding box first
+        let oddIntersections = false;
+        let x = point[0];
+        let y = point[1];
+        
+        for (let i = 0; i < edges.length; i++) {
+            let a = edges[i].from;
+            let b = edges[i].to;
+            if (a.y < y && b.y >= y || b.y < y && a.y >= y ) {
+                if (a.x + (y - a.y) / (b.y - a.y) * (b.x - a.x) < x) {
+                    oddIntersections = !oddIntersections;
+                }
+            }
+        }
+        return oddIntersections; 
+    }
 }

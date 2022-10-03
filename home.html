@@ -26,7 +26,15 @@
                     <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors(this.value)">
                     <!-- <input type="text" placeholder="Enter starting face" id="faceNeighbor"/> -->
                     <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
-                    <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase neighbors</button>
+                    <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase</button>
+                </form>
+                <br>
+                <p>Algorithm 3: find the face the point is contained within</p>
+                <form>
+                    <input type="text" placeholder="x" id="findPointX"/>
+                    <input type="text" placeholder="y" id="findPointY"/>
+                    <button type="button" onclick="findFace(findPointX.value, findPointY.value)">Find face</button>
+                    <button type="button" onclick="eraseElement('svgFindFace')">Erase</button>
                 </form>
                 <br>
                 <p>Algorithm 4: layers from starting face</p>
@@ -36,7 +44,7 @@
                     <input type="range" id="faceLayersNumber" min="0" max="10" value="0" oninput="drawLayers(this.value)">
                     <!-- <input type="text" placeholder="Enter layer number" id="faceLayersNumber"/> -->
                     <!-- <button type="button" onclick="drawLayers()">Draw layers</button> -->
-                    <button type="button" onclick="eraseElement('svgLayerGroup')">Erase layers</button>
+                    <button type="button" onclick="eraseElement('svgLayerGroup')">Erase</button>
                 </form>
             </td style="padding-left: 40px">
             <td>
