@@ -1,3 +1,50 @@
+/*
+My solution to the challenge of finding all interior faces of a graph involves building a doubly connected
+edge list (DCEL) or half edge data structure.
+
+This is implemented through four classes: Vertex, Edge, Face, and HEGraph.
+- the Vertex class represents a point in the graph and stores:
+    - its x,y coordinates
+    - an identifier
+    - a list of pointers to outgoing Edges.
+- the Edge class represents a half edge in the graph and stores:
+    - pointers to its from and to Vertex objects
+    - a boolean value track whether the Edge was visited when building Faces
+    - a pointer to the next Edge
+    - a pointer to the reverse/pair Edge
+    - the identifier of the Edge's associated Face
+- the Face class represents an interior Face in the graph and stores:
+    - a unique identifier (also the index of the Face in the HEGraph's face list)
+    - a pointer to the Face's key Edge (any edge within the Face)
+- the HEGraph class represents the graph and stores:
+    - the input vertex and edge data
+    - min and max values that represent a bounding box of the graph (for drawing the SVG)
+    - lists of pointers to Vertex, Edge, and Face objects
+    - a pointer to an extra Vertex used to build and delete the exterior face
+
+The code below contains a more detailed description of my solution's computational complexity, but here is an overview:
+Algorithm 1 - find interior faces:
+    1. Build Vertex objects from input vertices - time and space: O(V)
+    2. Build Edge objects from input edges and associate with their origin Vertex - time and space: O(E*2)
+    3. Sort outgoing edges at each Vertex in counterclockwise order, then chain edges - time and space: O(V)
+    4. Iterate over the graph's list of Edges and build Faces - time and space: O(E)
+    Total time/space complexity = O(V + E*2 + V + E) = O(N)
+Algorithm 2 - find a Face's neighbors:
+    1. Using the Face's identifier, index the Face in the graph's list of Faces - O(1)
+    2. Iterate over the Face's Edges and collect the associated Face identifiers - O(1)
+    Total time/space complexity = O(1)
+Algorithm 3 - find the face that a point lies within
+    1. Iterate over the list of Faces and check if the point is inside = O(F)
+    Total time complexity = O(F)
+    Total space complexity = O(F)
+Algorithm 4 - find layers from starting Face:
+    1. Get the Face in question by indexing its unique identifier and create first layer - O(1)
+    2. Iterate over Faces in the previous layer and add neighbors if they are unvisited - O(F) for entire graph
+        2a. checking or marking a Face as visited is done in constant time - O(1)
+    Total time complexity = O(F)
+    Total space complexity = O(F)
+*/
+
 function max(a, b) {
     if (a > b) {
         return a;
@@ -26,8 +73,9 @@ class Vertex {
      * Determines the counterclockwise order of the edges a and b.
      * Used in sortEdges as a comparator function to sort edges around a Vertex.
      * Returns a positive number if a is to the left of b, negative otherwise.
-     * Note: this comparison function does not handle parallel coincident edges since it is
+     * Note: this comparison function does not handle overlapping edges since it is
      * assumed that such edges would be separated by a vertex.
+     * Runs in O(1) time.
      */
     cross(a, b) {
         // A. case where point a is right of center and b is left of center
@@ -52,6 +100,10 @@ class Vertex {
         this.edges.push(edge);
     }
 
+    /**
+     * Sorts the Edge list of a Vertex object in counterclockwise order.
+     * Uses the Javascript sort method, which is typically O(nlogn).
+     */
     sortEdges() {
         this.edges.sort(this.cross);
 
@@ -98,6 +150,13 @@ class Face {
         this.keyEdge = keyEdge;
     }
 
+    /**
+     * Iterates over the Edges of a Face and returns a list of Vertex 
+     * objects that make up this Face.
+     * Because the average degree of a vertex in a planar graph is bounded,
+     * this operation can be considered to run in O(1) (though it may be closer to
+     * O(E) for a graph with many edges and few faces).
+     */
     getVertices() {
         let verts = [this.keyEdge.from];
         let curr = this.keyEdge.next;
@@ -108,6 +167,13 @@ class Face {
         return verts;
     }
 
+    /**
+     * Iterates over the Edges of a Face and returns the identifiers
+     * for each neighboring face in an array.
+     * Because the average degree of a face in a planar graph is bounded,
+     * this operation can be considered to run in O(1) time (though it may be closer to
+     * O(E) for a graph with many edges and few faces).
+     */
     getNeighbors() {
         let curr = this.keyEdge;
         const faces = [];
@@ -138,6 +204,11 @@ class HEGraph {
 
     }
 
+    /**
+     * Constructs Vertex objects, determines the graph's overall dimensional bounds,
+     * and creates a key vertex and edge for removing the exterior face later on.
+     * If v is the number of input vertices, this operation runs in O(v) time and uses O(v) space.
+     */
     buildVertices() {
         const v = [];
         let i = 0;
@@ -164,6 +235,14 @@ class HEGraph {
         return v;
     }
 
+    /**
+     * Constructs Edge objects, links them to their origin Vertex objects, and 
+     * sorts each Vertex's edge list.
+     * Creating the Edge objects takes O(e*2) space and O(e) time if e is the number of input edges.
+     * Sorting the Vertex edge lists takes O(V) time because the average degree of a vertex
+     * in a planar graph is bounded. Thus the O(nlogn) complexity of the sort for each Vertex
+     * usually has no affect on the overall time complexity.
+     */
     buildEdges() {
         const e = [];
         let from, to;
@@ -190,6 +269,12 @@ class HEGraph {
         return e;
     }
 
+    /**
+     * Constructs Face objects and stores them in an array.
+     * If E is the number of Edge objects, this operation takes O(E*2) time and uses O(E) space.
+     * This takes about O(E*2) time because most Edge objects will be visited twice: once in the outer for loop
+     * and once in the inner while loop.
+     */
     buildFaces() {
         const f = [];
         let fCounter = 0;
@@ -217,6 +302,7 @@ class HEGraph {
         }
 
         // iterate over the exterior face and remove interior face references to itself
+        // this can be considered to be done in O(1) time typically since average face size is bounded
         let curr = extFace.keyEdge.next.next;
         while (curr != extFace.keyEdge) {
             curr.reverse.reverse = null;
@@ -230,6 +316,11 @@ class HEGraph {
         return this.f;
     }
 
+    /**
+     * Returns a list of all face identifiers in O(F) time. Face object identifiers match their index
+     * in the faces list, so determining a face's position or the number of faces can simply be done in O(1)
+     * time.
+     */
     getFaceIds() {
         const ids = [];
         for (let i = 0; i < this.f.length; i++) {
@@ -238,12 +329,19 @@ class HEGraph {
         return ids;
     }
 
+    /**
+     * Returns a Face object from its identifier.
+     * This operation runs in O(1) time.
+     */
     getFace(id) {
         return this.f[id];
     }
 
     /**
      * Computes "layers" of neighboring face sets from a starting face.
+     * This operation takes O(F) time and uses O(F) space. Even though each Edge of each Face
+     * is visited once, average face size is bounded and checking if a Face has been visited 
+     * only takes O(1) time to look up an index in the "found" boolean array.
      */
     computeLayers(faceId) {
         const layers = [[faceId]];
@@ -271,6 +369,14 @@ class HEGraph {
         return layers;
     }
 
+    /**
+     * Determines whether a point [x, y] lies within a specified face. Returns true if so, 
+     * and false otherwise. This operation relies on a ray tracing operation to determine
+     * if a horizontal ray intersects the face edges an odd number of times. Prior to performing
+     * the ray tracing calculation, a fast bounding box check is used to quickly filter most faces.
+     * The bounding box check is performed in O(1) time.
+     * The ray tracing check is performed in O(e) time if e is the number of edges on a face.
+     */
     pointInFace(faceId, point) {
         let face = this.getFace(faceId);
         let edges = [];
@@ -316,6 +422,12 @@ class HEGraph {
         return odd;
     }
 
+    /**
+     * Determines whether a point [x, y] lies within any face in the graph. Returns
+     * the face identifier if so, null if not. This operation takes O(F) time if F is the 
+     * number of Faces in the graph. Even though the pointInFace operation's time complexity is
+     * O(e) for each Face, the number of edges per Face has an average bound.
+     */
     pointInGraph(point) {
         let found = false;
         let i = 0;
