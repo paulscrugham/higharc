@@ -274,19 +274,23 @@ class HEGraph {
         } while (curr != face.keyEdge);
 
         // TODO: check bounding box first
-        let oddIntersections = false;
+        let odd = false;
         let x = point[0];
         let y = point[1];
         
         for (let i = 0; i < edges.length; i++) {
             let a = edges[i].from;
             let b = edges[i].to;
-            if (a.y < y && b.y >= y || b.y < y && a.y >= y ) {
-                if (a.x + (y - a.y) / (b.y - a.y) * (b.x - a.x) < x) {
-                    oddIntersections = !oddIntersections;
+            // check if a.y is above y and b.y is below y and vice versa (horizontal ray intersects edge)
+            if (a.y < y && b.y >= y || b.y < y && a.y >= y) {
+                // compute x value of intersection point
+                let xIntersect = a.x + (y - a.y) / (b.y - a.y) * (b.x - a.x);
+                // check if x value is to the left of x
+                if (xIntersect < x) {
+                    odd = !odd;
                 }
             }
         }
-        return oddIntersections; 
+        return odd; 
     }
 }
