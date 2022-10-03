@@ -13,32 +13,53 @@
                     <button type="button" onclick="algo2tests()">Run algorithm 2 tests</button>
                 </form> -->
                 <br>
-                <p>Algorithm 1: draw graph from JSON</p>
+                <h3>Algorithm 1: draw graph from JSON</h3>
                 <form>
                     <input type="file" id="graphFile"/>
                     <button type="button" onclick="onClick()">Draw graph!</button>
                 </form>
                 <br>
+                <table>
+                    <tr>
+                        <td>Number of interior faces created: </td>
+                        <td id="a1Output" style="max-width:400px;word-wrap:break-word;"></td>
+                    </tr>
+                </table>
+                <br>
 
-                <p>Algorithm 2: find face neighbors</p>
+                <h3>Algorithm 2: find face neighbors</h3>
                 <form>
                     <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors(this.value)">
                     <!-- <input type="text" placeholder="Enter starting face" id="faceNeighbor"/> -->
                     <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
                     <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase</button>
                 </form>
-
                 <br>
-                <p>Algorithm 3: find the face the point is contained within</p>
+                <table>
+                    <tr>
+                        <td>Current face: </td>
+                        <td id="a2Output1"></td>
+                        <td>Neighbors: </td>
+                        <td id="a2Output2" style="max-width:400px;word-wrap:break-word;"></td>
+                    </tr>
+                </table>
+                <br>
+                <h3>Algorithm 3: find the face the point is contained within</h3>
                 <form>
                     <input type="text" placeholder="x" id="findPointX"/>
                     <input type="text" placeholder="y" id="findPointY"/>
                     <button type="button" onclick="findFace(findPointX.value, findPointY.value)">Find face</button>
                     <button type="button" onclick="eraseElement('svgFindFace')">Erase</button>
                 </form>
-
                 <br>
-                <p>Algorithm 4: layers from starting face</p>
+                <table>
+                    <tr>
+                        <td>Face: </td>
+                        <td id="a3Output" style="max-width:400px;word-wrap:break-word;"></td>
+                    </tr>
+                </table>
+                <br>
+                <h3>Algorithm 4: layers from starting face</h3>
                 <form>
                     <input type="text" placeholder="Enter starting face" id="faceLayersStart"/>
                     <button type="button" onclick="computeLayers(faceLayersStart.value)">Compute layers</button>
@@ -47,6 +68,13 @@
                     <!-- <button type="button" onclick="drawLayers()">Draw layers</button> -->
                     <button type="button" onclick="eraseElement('svgLayerGroup')">Erase</button>
                 </form>
+                <br>
+                <table>
+                    <tr>
+                        <td>Current layer: </td>
+                        <td id="a4Output" style="max-width:400px;word-wrap:break-word;"></td>
+                    </tr>
+                </table>
                 <br>
                 <p>Tests (output displayed in browser console)</p>
                 <form>
@@ -69,7 +97,7 @@
 
 
 <script type="text/javascript" src="script.js"></script>
-<script type="text/javascript" src="dcel.js"></script>
+<script type="text/javascript" src="hegraph.js"></script>
 <script type="text/javascript" src="./tests/algorithm1_tests.js"></script>
 <script type="text/javascript" src="./tests/algorithm2_tests.js"></script>
 <script type="text/javascript" src="./tests/algorithm3_tests.js"></script>

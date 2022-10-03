@@ -47,9 +47,13 @@ function findFace(x, y) {
         svgFace.setAttribute('stroke', 'red');
         svgFace.setAttribute('stroke-width', '3');
         group.append(svgFace);
+        document.getElementById('a3Output').innerHTML = faceId;
+    } else {
+        document.getElementById('a3Output').innerHTML = "None";
     }
     group.append(circle);
     svg.append(group);
+    
 }
 
 /**
@@ -87,6 +91,7 @@ function drawLayers(layerId) {
         group.append(svgFace);
     }
     svg.append(group);
+    document.getElementById('a4Output').innerHTML = layers[layerId];
 }
 
 /**
@@ -123,8 +128,9 @@ function drawNeighbors(faceId) {
     svgFace.setAttribute('stroke', 'purple');
     svgFace.setAttribute('stroke-width', '3');
     group.append(svgFace);
-
     svg.append(group);
+    document.getElementById('a2Output1').innerHTML = faceId;
+    document.getElementById('a2Output2').innerHTML = neighborFaceIds;
 }
 
 /**
@@ -169,6 +175,8 @@ function drawGraph(g) {
     }
     svg.append(group);
     userGraph = hegraph;
+
+    document.getElementById('a1Output').innerHTML = hegraph.getFaceCount();
 }
 
 /**
