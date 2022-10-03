@@ -25,8 +25,30 @@ class Vertex {
     /**
      * Computes the cross product of two points aroud a center.
      * Used in sortEdges as a comparator function to sort edges around a Vertex.
+     * Returns a positive number if a is to the left of b, negative otherwise.
+     * Note: this comparison function does not handle coincident edges since it is
+     * assumed that such edges would be separated by a vertex.
      */
-    cross(b, a) {
+    cross(a, b) {
+        // case where point a is right of center and b is left of center
+        if (a.to.x - a.from.x >= 0 && b.to.x - b.from.x < 0)
+            return -1;
+        // case where point a is left of center and b is right of center
+        if (a.to.x - a.from.x < 0 && b.to.x - b.from.x >= 0)
+            return 1;
+        if (a.to.x - a.from.x == 0 && b.to.x - b.from.x == 0) {
+            if (a.to.y - a.from.y >= 0 || b.to.y - b.from.y >= 0)
+                if (a.to.y > b.to.y) {
+                    return -1
+                } else {
+                    return 1
+                }
+                if (b.to.y > a.to.y) {
+                    return -1
+                } else {
+                    return 1
+                }
+        }
         return (a.to.x - a.from.x) * (b.to.y - b.from.y) - (a.to.y - a.from.y) * (b.to.x - b.from.x);
     }
 
@@ -143,7 +165,6 @@ class HEGraph {
         this.keyVert = new Vertex(this.vertices[keyVertId][0] + 1, this.vertices[keyVertId][1] + 1, i);
         v.push(this.keyVert);
         this.edges[0] = [keyVertId, i];
-        // console.log(this.xMax, this.yMax, this.xMin, this.yMin);
         return v;
     }
 
