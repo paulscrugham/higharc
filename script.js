@@ -44,6 +44,7 @@ function findFace(x, y) {
             svgFace.setAttribute('stroke', 'red');
             svgFace.setAttribute('stroke-width', '3');
             group.append(svgFace);
+            // TODO: add logic to stop loop when face is found
         }
     }
     group.append(circle);
