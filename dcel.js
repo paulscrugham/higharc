@@ -23,26 +23,32 @@ This is implemented through four classes: Vertex, Edge, Face, and HEGraph.
     - a pointer to an extra Vertex used to build and delete the exterior face
 
 The code below contains a more detailed description of my solution's computational complexity, but here is an overview:
+- v: number of input vertices
+- e: number of input edges
+- V: number of Vertex objects created
+- E: number of Edge objects created
+- F: number of Face objects created
+
 Algorithm 1 - find interior faces:
-    1. Build Vertex objects from input vertices - time and space: O(V)
-    2. Build Edge objects from input edges and associate with their origin Vertex - time and space: O(E*2)
-    3. Sort outgoing edges at each Vertex in counterclockwise order, then chain edges - time and space: O(V)
-    4. Iterate over the graph's list of Edges and build Faces - time and space: O(E)
-    Total time/space complexity = O(V + E*2 + V + E) = O(N)
-Algorithm 2 - find a Face's neighbors:
+    1. Build Vertex objects from input vertices - O(v)
+    2. Build Edge objects from input edges and associate with their origin Vertex - O(e*2)
+    3. Sort outgoing edges at each Vertex in counterclockwise order, then chain edges - O(V)
+    4. Iterate over the graph's list of Edges and build Faces - O(E)
+    Total time/space complexity = O(v + e*2 + V + E)
+Algorithm 2 - find a face's neighbors:
     1. Using the Face's identifier, index the Face in the graph's list of Faces - O(1)
     2. Iterate over the Face's Edges and collect the associated Face identifiers - O(1)
     Total time/space complexity = O(1)
 Algorithm 3 - find the face that a point lies within
-    1. Iterate over the list of Faces and check if the point is inside = O(F)
+    1. Iterate over the list of Faces - O(F)
+        1a. Check if the point is inside - O(1)
     Total time complexity = O(F)
-    Total space complexity = O(F)
+    Total space complexity = O(1)
 Algorithm 4 - find layers from starting Face:
     1. Get the Face in question by indexing its unique identifier and create first layer - O(1)
     2. Iterate over Faces in the previous layer and add neighbors if they are unvisited - O(F) for entire graph
-        2a. checking or marking a Face as visited is done in constant time - O(1)
-    Total time complexity = O(F)
-    Total space complexity = O(F)
+        2a. Checking for or marking a visited Face - time: O(1), space: O(F)
+    Total time/space complexity = O(F)
 */
 
 function max(a, b) {
