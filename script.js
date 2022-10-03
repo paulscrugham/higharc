@@ -36,16 +36,15 @@ function findFace(x, y) {
     circle.setAttribute('r', 5);
     circle.setAttribute('fill', 'red');
 
-    for (let i = 0; i < userGraph.f.length; i++) {
-        if (userGraph.pointInFace(i, [x, y])) {
-            let svgFace = document.createElementNS(ns, 'use');
-            svgFace.setAttribute('href', '#' + i);
-            svgFace.setAttribute('fill', 'None');
-            svgFace.setAttribute('stroke', 'red');
-            svgFace.setAttribute('stroke-width', '3');
-            group.append(svgFace);
-            // TODO: add logic to stop loop when face is found
-        }
+    let faceId = userGraph.pointInGraph([x, y]);
+
+    if (faceId != null) {
+        let svgFace = document.createElementNS(ns, 'use');
+        svgFace.setAttribute('href', '#' + faceId);
+        svgFace.setAttribute('fill', 'None');
+        svgFace.setAttribute('stroke', 'red');
+        svgFace.setAttribute('stroke-width', '3');
+        group.append(svgFace);
     }
     group.append(circle);
     svg.append(group);

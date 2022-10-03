@@ -230,6 +230,14 @@ class HEGraph {
         return this.f;
     }
 
+    getFaceIds() {
+        const ids = [];
+        for (let i = 0; i < this.f.length; i++) {
+            ids.push(this.f[i].id);
+        }
+        return ids;
+    }
+
     getFace(id) {
         return this.f[id];
     }
@@ -306,5 +314,21 @@ class HEGraph {
             }
         }
         return odd;
+    }
+
+    pointInGraph(point) {
+        let found = false;
+        let i = 0;
+
+        while (!found && i < this.f.length) {
+            found = this.pointInFace(i, point);
+            i++;
+        }
+
+        if (found) {
+            return i - 1;
+        } else {
+            return null;
+        }
     }
 }
