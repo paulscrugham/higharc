@@ -235,18 +235,6 @@ class HEGraph {
         return this.f[id];
     }
 
-    printVerts() {
-        for (let i = 0; i < this.v.length; i++) {
-            console.log(this.v[i].toStr());
-            for (let j = 0; j < this.v[i].edges.length; j++) {
-                console.log("out: " + this.v[i].edges[j].toStr() + 
-                ", next: " + this.v[i].edges[j].next.toStr() + 
-                ", next.next : " + this.v[i].edges[j].next.next.toStr() + 
-                ", next.next.next : " + this.v[i].edges[j].next.next.next.toStr());
-            }
-        }
-    }
-
     /**
      * Computes "layers" of neighboring face sets from a starting face.
      */
