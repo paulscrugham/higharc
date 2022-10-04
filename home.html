@@ -9,9 +9,6 @@
     <table style="margin: auto">
         <tr>
             <td style="padding-right: 40px;">
-                <!-- <form>
-                    <button type="button" onclick="algo2tests()">Run algorithm 2 tests</button>
-                </form> -->
                 <br>
                 <h3>Algorithm 1: draw graph from JSON</h3>
                 <form>
@@ -30,8 +27,6 @@
                 <h3>Algorithm 2: find face neighbors</h3>
                 <form>
                     <input type="range" id="faceNeighbor" min="0" max="10" value="0" oninput="drawNeighbors(this.value)">
-                    <!-- <input type="text" placeholder="Enter starting face" id="faceNeighbor"/> -->
-                    <!-- <button type="button" onclick="drawNeighbors()">Draw neighbors</button> -->
                     <button type="button" onclick="eraseElement('svgNeighborGroup')">Erase</button>
                 </form>
                 <br>
@@ -64,8 +59,6 @@
                     <input type="text" placeholder="Enter starting face" id="faceLayersStart"/>
                     <button type="button" onclick="computeLayers(faceLayersStart.value)">Compute layers</button>
                     <input type="range" id="faceLayersNumber" min="0" max="10" value="0" oninput="drawLayers(this.value)">
-                    <!-- <input type="text" placeholder="Enter layer number" id="faceLayersNumber"/> -->
-                    <!-- <button type="button" onclick="drawLayers()">Draw layers</button> -->
                     <button type="button" onclick="eraseElement('svgLayerGroup')">Erase</button>
                 </form>
                 <br>
@@ -100,14 +93,9 @@
         </tr>
     </table>
 </div>
-
-
 <br>
-
-
 <script type="text/javascript" src="script.js"></script>
 <script type="text/javascript" src="hegraph.js"></script>
 <script type="text/javascript" src="./tests/algorithm_tests.js"></script>
-
 </body>
 </html>
