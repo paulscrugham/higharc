@@ -40,15 +40,16 @@ Algorithm 2 - find a face's neighbors:
     2. Iterate over the Face's Edges and collect the associated Face identifiers - O(1)
     Total time/space complexity = O(1)
 Algorithm 3 - find the face that a point lies within
-    1. Iterate over the list of Faces - O(F)
-        1a. Check if the point is inside - O(1)
-    Total time complexity = O(F)
+    1. Iterate over each Edge in each Face to build a bounding box - O(E)
+    2. Iterate over each Edge in each Face to check for intersections - O(E)
+    Total time complexity = O(E) in the best case, O(E*2) in the worst case
     Total space complexity = O(1)
 Algorithm 4 - find layers from starting Face:
-    1. Get the Face in question by indexing its unique identifier and create first layer - O(1)
-    2. Iterate over Faces in the previous layer and add neighbors if they are unvisited - O(F) for entire graph
+    1. Get the Face object in question by indexing its unique identifier and create first layer - O(1)
+    2. Iterate over Face Edges in the previous layer and add neighbors if they are unvisited - O(E) for entire graph
         2a. Checking for or marking a visited Face - time: O(1), space: O(F)
-    Total time/space complexity = O(F)
+    Total time complexity = O(E)
+    Total space complexity = O(F)
 */
 
 function max(a, b) {
@@ -108,7 +109,8 @@ class Vertex {
 
     /**
      * Sorts the Edge list of a Vertex object in counterclockwise order.
-     * Uses the Javascript sort method, which is typically O(nlogn).
+     * Uses the Javascript sort method, which is typically O(E'logE') if
+     * E' is the number of outgoing Edges at a Vertex.
      */
     sortEdges() {
         this.edges.sort(this.cross);
@@ -159,7 +161,7 @@ class Face {
     /**
      * Iterates over the Edges of a Face and returns a list of Vertex 
      * objects that make up this Face.
-     * Because the average degree of a vertex in a planar graph is bounded,
+     * Because the average degree of a face in a planar graph is bounded,
      * this operation can be considered to run in O(1) (though it may be closer to
      * O(E) for a graph with many edges and few faces).
      */
@@ -213,7 +215,10 @@ class HEGraph {
     /**
      * Constructs Vertex objects, determines the graph's overall dimensional bounds,
      * and creates a key vertex and edge for removing the exterior face later on.
-     * If v is the number of input vertices, this operation runs in O(v) time and uses O(v) space.
+     * If v is the number of input vertices and E' is the number of outgoing Edges 
+     * at each vertex, this operation runs in O(v * E'logE'). Since the average degree 
+     * of a vertex in a planar graph is bounded, the edge sorting time can be considered 
+     * a constant time operation making the overall time complexity simply O(v). Uses O(v) space.
      */
     buildVertices() {
         const v = [];
@@ -349,9 +354,9 @@ class HEGraph {
 
     /**
      * Computes "layers" of neighboring face sets from a starting face.
-     * This operation takes O(F) time and uses O(F) space. Even though each Edge of each Face
-     * is visited once, average face size is bounded and checking if a Face has been visited 
-     * only takes O(1) time to look up an index in the "found" boolean array.
+     * This operation takes O(E) time since it iterates over every Edge and uses O(F) space to store the
+     * layers of faceIds. Checking if a Face has been visited only takes O(1) time to look up an
+     * index in the "found" boolean array.
      */
     computeLayers(faceId) {
         const layers = [[faceId]];
@@ -381,11 +386,13 @@ class HEGraph {
 
     /**
      * Determines whether a point [x, y] lies within a specified face. Returns true if so, 
-     * and false otherwise. This operation relies on a ray tracing operation to determine
-     * if a horizontal ray intersects the face edges an odd number of times. Prior to performing
-     * the ray tracing calculation, a fast bounding box check is used to quickly filter most faces.
-     * The bounding box check is performed in O(1) time.
-     * The ray tracing check is performed in O(e) time if e is the number of edges on a face.
+     * and false otherwise. First the algorithm performs a fast check if the point lies in a bounding
+     * box. If inside the bounding box, it uses ray tracing to check how many times a horizontal ray 
+     * intersects the Face's edges. The bounding box check is done in O(E') time if E' is the number
+     * of edges in a Face. The ray tracing check is done in O(E') time as well since the intersection
+     * calculation is performed for each edge. In the worst case this operation takes O(E'*2 time) to
+     * perform the bounding box and intersection checks, and in the best case O(E') time for the bounding
+     * box check.
      * NOTE: if the point lies directly on a graph edge or vertice, behavior is unpredictable.
      */
     pointInFace(faceId, point) {
@@ -398,6 +405,7 @@ class HEGraph {
         let maxX = minX;
         let maxY = minY;
         
+        // get Edges and track min/max values for bounding box
         do {
             edges.push(curr);
             curr = curr.next;
@@ -434,10 +442,12 @@ class HEGraph {
     }
 
     /**
+     * Algorithm 3
      * Determines whether a point [x, y] lies within any face in the graph. Returns
-     * the face identifier if so, null if not. This operation takes O(F) time if F is the 
-     * number of Faces in the graph. Even though the pointInFace operation's time complexity is
-     * O(e) for each Face, the number of edges per Face has an average bound.
+     * the face identifier if so, and null if not. This operation takes O(E) time in the best 
+     * case (only bounding boxes are checked so iterate over each Edge once) and O(E*2) in 
+     * the worst case (bounding boxes and edge intersections are checked so iterate twice over
+     * each Edge).
      * NOTE: if the point lies directly on a graph edge or vertice, behavior is unpredictable.
      */
     pointInGraph(point) {
