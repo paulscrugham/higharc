@@ -386,6 +386,7 @@ class HEGraph {
      * the ray tracing calculation, a fast bounding box check is used to quickly filter most faces.
      * The bounding box check is performed in O(1) time.
      * The ray tracing check is performed in O(e) time if e is the number of edges on a face.
+     * NOTE: if the point lies directly on a graph edge or vertice, behavior is unpredictable.
      */
     pointInFace(faceId, point) {
         let face = this.getFace(faceId);
@@ -437,6 +438,7 @@ class HEGraph {
      * the face identifier if so, null if not. This operation takes O(F) time if F is the 
      * number of Faces in the graph. Even though the pointInFace operation's time complexity is
      * O(e) for each Face, the number of edges per Face has an average bound.
+     * NOTE: if the point lies directly on a graph edge or vertice, behavior is unpredictable.
      */
     pointInGraph(point) {
         let found = false;
