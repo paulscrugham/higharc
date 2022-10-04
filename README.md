@@ -16,4 +16,4 @@ Test JSON graphs are located in the /tests directory
 
 `script.js` contains the code to draw the graph SVG
 
-`dcel.js` contains the code that implements the half edge data structure and algorithm function
+`hegraph.js` contains the code that implements the half edge data structure and algorithm function
