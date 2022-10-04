@@ -286,7 +286,7 @@ class HEGraph {
         let fCounter = 0;
         let extFace;
 
-        // this for loop could be more efficient - could skip edges that have been walked
+        // iterate over edges and build faces
         for (let i = 0; i < this.e.length; i++) {
             if (this.e[i].visited == false) {
                 let face = new Face(fCounter, this.e[i]);               
