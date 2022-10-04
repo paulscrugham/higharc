@@ -88,6 +88,10 @@ function drawLayers(layerId) {
         svgFace.setAttribute('fill', 'None');
         svgFace.setAttribute('stroke', 'red');
         svgFace.setAttribute('stroke-width', '3');
+        // svgFace.append("text")
+        //     .attr('text-anchor', 'middle')
+        //     .attr('fill', 'red')
+        //     .text(i);
         group.append(svgFace);
     }
     svg.append(group);
