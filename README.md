@@ -2,7 +2,7 @@
 
 ## How to pull the code
 
-`git pull https://github.com/paulscrugham/halfedge.git`
+`git pull https://github.com/paulscrugham/higharc.git`
 
 ## How to run the code
 
