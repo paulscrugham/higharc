@@ -181,6 +181,8 @@ function drawGraph(g) {
     userGraph = hegraph;
 
     document.getElementById('a1Output').innerHTML = hegraph.getFaceCount();
+    document.getElementById('minCoord').innerHTML = hegraph.xMin + ", " + hegraph.yMin;
+    document.getElementById('maxCoord').innerHTML = hegraph.xMax + ", " + hegraph.yMax;
 }
 
 /**
